@@ -1,12 +1,15 @@
 <?php
+
 /**
- * sanitization.php
+ * Sanitization
  *
  * Contains functions for sanitizing data inputs.
  *
  * @package CustomSanitization
  * @version 1.0.0
  */
+
+declare(strict_types=1);
 
 // Ensure no direct access
 defined('ABSPATH') || exit;

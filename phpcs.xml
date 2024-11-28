@@ -1,6 +1,39 @@
 <?xml version="1.0"?>
-<ruleset>
-    <rule>
-        <severity>0</severity>
-    </rule>
+<ruleset name="DevConnect Coding Standards">
+    <description>
+        Coding standards for the DevConnect project, enforcing PSR-12 and additional quality rules.
+    </description>
+
+    <!-- Base Standard: PSR-12 -->
+    <rule ref="PSR12"/>
+
+    <!-- Additional Standards -->
+    <rule ref="Generic"/>
+    <rule ref="Squiz"/>
+    <rule ref="Zend"/>
+
+    <!-- Exclude Specific Sniffs -->
+    <!-- Exclude line length checks to allow flexibility -->
+    <exclude name="Generic.Files.LineLength"/>
+
+    <!-- File Extensions to Check -->
+    <fileExtensions>
+        <extension>php</extension>
+    </fileExtensions>
+
+    <!-- Directories to Exclude -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <!-- Severity Levels -->
+    <!-- Set error severity to 5 and warning severity to 5 -->
+    <arg name="error-severity" value="5"/>
+    <arg name="warning-severity" value="5"/>
+
+    <!-- Reporting -->
+    <!-- Show progress of the run -->
+    <arg value="p"/>
+    <!-- Show sniff codes in all reports -->
+    <arg value="s"/>
 </ruleset>

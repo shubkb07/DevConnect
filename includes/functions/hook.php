@@ -1,4 +1,5 @@
 <?php
+
 /**
  * hook.php
  *
@@ -10,35 +11,38 @@
 
 // Ensure no direct access
 defined('ABSPATH') || exit;
-
-/**
+/*
  * Global array to store all hooks.
  *
  * @var array
  */
 $GLOBALS['custom_hooks'] = [
-    'actions' => [],
-    'filters' => [],
+	'actions' => [],
+	'filters' => [],
 ];
+
 
 /**
  * Adds a filter to a specific hook.
  *
- * @param string   $hook_name     The name of the filter hook.
- * @param callable $callback      The callback to be run when the filter is applied.
- * @param int      $priority      Optional. Used to specify the order in which the functions
- *                                associated with a particular action are executed. Default 10.
+ * @param string   $hook_name The name of the filter hook.
+ * @param callable $callback  The callback to be run when the filter is applied.
+ * @param integer  $priority  Optional. Used to specify the order in which the functions
+ *                            associated with a particular action are executed. Default 10.
  */
 function add_filter(string $hook_name, callable $callback, int $priority = 10): void
 {
-    global $custom_hooks;
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['filters'][$hook_name])) {
-        $custom_hooks['filters'][$hook_name] = [];
-    }
+	if (! isset($custom_hooks['filters'][$hook_name])) {
+		  $custom_hooks['filters'][$hook_name] = array();
+	 
+	}
 
-    $custom_hooks['filters'][$hook_name][$priority][] = $callback;
-}
+	$custom_hooks['filters'][$hook_name][$priority][] = $callback;
+
+}//end add_filter()
+
 
 /**
  * Applies filters to a value.
@@ -49,46 +53,49 @@ function add_filter(string $hook_name, callable $callback, int $priority = 10): 
  *
  * @return mixed The filtered value.
  */
-function apply_filters(string $hook_name, $value, ...$args)
-{
-    global $custom_hooks;
+function apply_filters(string $hook_name, $value, ...$args) {
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['filters'][$hook_name])) {
-        return $value;
-    }
+	if (! isset($custom_hooks['filters'][$hook_name])) {
+		  return $value;
+	}
 
-    // Sort callbacks by priority
-    ksort($custom_hooks['filters'][$hook_name]);
+ // end if
+	ksort($custom_hooks['filters'][$hook_name]);
 
-    foreach ($custom_hooks['filters'][$hook_name] as $callbacks) {
-        foreach ($callbacks as $callback) {
-            if (is_callable($callback)) {
-                $value = $callback($value, ...$args);
-            }
-        }
-    }
+	foreach ($custom_hooks['filters'][$hook_name] as $callbacks) {
+		foreach ($callbacks as $callback) {
+			if (is_callable($callback)) {
+				$value = $callback($value, ...$args);
+		   
+			}
+	   
+		}
+	}
 
-    return $value;
-}
+	return $value;
+}//end apply_filters()
+
 
 /**
  * Adds an action to a specific hook.
  *
  * @param string   $hook_name The name of the action hook.
  * @param callable $callback  The callback to be run when the action is fired.
- * @param int      $priority  Optional. Used to specify the order in which the functions
+ * @param integer  $priority  Optional. Used to specify the order in which the functions
  *                            associated with a particular action are executed. Default 10.
  */
-function add_action(string $hook_name, callable $callback, int $priority = 10): void
-{
-    global $custom_hooks;
+function add_action(string $hook_name, callable $callback, int $priority = 10): void {
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['actions'][$hook_name])) {
-        $custom_hooks['actions'][$hook_name] = [];
-    }
+	if (! isset($custom_hooks['actions'][$hook_name])) {
+		  $custom_hooks['actions'][$hook_name] = array();
+	 
+	}
 
-    $custom_hooks['actions'][$hook_name][$priority][] = $callback;
-}
+	$custom_hooks['actions'][$hook_name][$priority][] = $callback;
+}//end add_action()
+
 
 /**
  * Executes all callbacks attached to an action hook.
@@ -96,65 +103,72 @@ function add_action(string $hook_name, callable $callback, int $priority = 10): 
  * @param string $hook_name The name of the action hook.
  * @param mixed  ...$args   Optional. Additional arguments passed to the callback functions.
  */
-function do_action(string $hook_name, ...$args): void
-{
-    global $custom_hooks;
+function do_action(string $hook_name, ...$args): void {
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['actions'][$hook_name])) {
-        return;
-    }
+	if (! isset($custom_hooks['actions'][$hook_name])) {
+		  return;
+	 
+	}
 
-    // Sort callbacks by priority
-    ksort($custom_hooks['actions'][$hook_name]);
+ // end if
+	ksort($custom_hooks['actions'][$hook_name]);
 
-    foreach ($custom_hooks['actions'][$hook_name] as $callbacks) {
-        foreach ($callbacks as $callback) {
-            if (is_callable($callback)) {
-                $callback(...$args);
-            }
-        }
-    }
-}
+	foreach ($custom_hooks['actions'][$hook_name] as $callbacks) {
+		foreach ($callbacks as $callback) {
+			if (is_callable($callback)) {
+				$callback(...$args);
+			
+			}
+	   
+		}
+	}
+}//end do_action()
+
 
 /**
  * Removes a filter from a hook.
  *
  * @param string   $hook_name The name of the filter hook.
  * @param callable $callback  The callback to be removed.
- * @param int      $priority  Optional. The priority of the callback. Default 10.
+ * @param integer  $priority  Optional. The priority of the callback. Default 10.
  */
-function remove_filter(string $hook_name, callable $callback, int $priority = 10): void
-{
-    global $custom_hooks;
+function remove_filter(string $hook_name, callable $callback, int $priority = 10): void {
+	global $custom_hooks;
 
-    if (isset($custom_hooks['filters'][$hook_name][$priority])) {
-        foreach ($custom_hooks['filters'][$hook_name][$priority] as $key => $registered_callback) {
-            if ($registered_callback === $callback) {
-                unset($custom_hooks['filters'][$hook_name][$priority][$key]);
-            }
-        }
-    }
-}
+	if (isset($custom_hooks['filters'][$hook_name][$priority])) {
+		foreach ($custom_hooks['filters'][$hook_name][$priority] as $key => $registered_callback) {
+			if ($registered_callback === $callback) {
+				unset($custom_hooks['filters'][$hook_name][$priority][$key]);
+		   
+			}
+	   
+		}
+	}
+}//end remove_filter()
+
 
 /**
  * Removes an action from a hook.
  *
  * @param string   $hook_name The name of the action hook.
  * @param callable $callback  The callback to be removed.
- * @param int      $priority  Optional. The priority of the callback. Default 10.
+ * @param integer  $priority  Optional. The priority of the callback. Default 10.
  */
-function remove_action(string $hook_name, callable $callback, int $priority = 10): void
-{
-    global $custom_hooks;
+function remove_action(string $hook_name, callable $callback, int $priority = 10): void {
+	global $custom_hooks;
 
-    if (isset($custom_hooks['actions'][$hook_name][$priority])) {
-        foreach ($custom_hooks['actions'][$hook_name][$priority] as $key => $registered_callback) {
-            if ($registered_callback === $callback) {
-                unset($custom_hooks['actions'][$hook_name][$priority][$key]);
-            }
-        }
-    }
-}
+	if (isset($custom_hooks['actions'][$hook_name][$priority])) {
+		foreach ($custom_hooks['actions'][$hook_name][$priority] as $key => $registered_callback) {
+			if ($registered_callback === $callback) {
+				unset($custom_hooks['actions'][$hook_name][$priority][$key]);
+		   
+			}
+	   
+		}
+	}
+}//end remove_action()
+
 
 /**
  * Checks if a filter has been registered for a hook.
@@ -162,28 +176,29 @@ function remove_action(string $hook_name, callable $callback, int $priority = 10
  * @param string   $hook_name The name of the filter hook.
  * @param callable $callback  Optional. The callback to check for. Default null.
  *
- * @return bool True if the filter exists, false otherwise.
+ * @return boolean True if the filter exists, false otherwise.
  */
-function has_filter(string $hook_name, callable $callback = null): bool
-{
-    global $custom_hooks;
+function has_filter(string $hook_name, callable $callback = NULL): bool {
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['filters'][$hook_name])) {
-        return false;
-    }
+	if (! isset($custom_hooks['filters'][$hook_name])) {
+		  return FALSE;
+	}
 
-    if ($callback === null) {
-        return !empty($custom_hooks['filters'][$hook_name]);
-    }
+	if ($callback === NULL) {
+		 return ! empty($custom_hooks['filters'][$hook_name]);
+	}
 
-    foreach ($custom_hooks['filters'][$hook_name] as $priority => $callbacks) {
-        if (in_array($callback, $callbacks, true)) {
-            return true;
-        }
-    }
+	foreach ($custom_hooks['filters'][$hook_name] as $priority => $callbacks) {
+		if (in_array($callback, $callbacks, TRUE)) {
+			return TRUE;
+		
+		}
+	}
 
-    return false;
-}
+	return FALSE;
+}//end has_filter()
+
 
 /**
  * Checks if an action has been registered for a hook.
@@ -191,63 +206,68 @@ function has_filter(string $hook_name, callable $callback = null): bool
  * @param string   $hook_name The name of the action hook.
  * @param callable $callback  Optional. The callback to check for. Default null.
  *
- * @return bool True if the action exists, false otherwise.
+ * @return boolean True if the action exists, false otherwise.
  */
-function has_action(string $hook_name, callable $callback = null): bool
-{
-    global $custom_hooks;
+function has_action(string $hook_name, callable $callback = NULL): bool {
+	global $custom_hooks;
 
-    if (!isset($custom_hooks['actions'][$hook_name])) {
-        return false;
-    }
+	if (! isset($custom_hooks['actions'][$hook_name])) {
+		  return FALSE;
+	}
 
-    if ($callback === null) {
-        return !empty($custom_hooks['actions'][$hook_name]);
-    }
+	if ($callback === NULL) {
+		 return ! empty($custom_hooks['actions'][$hook_name]);
+	}
 
-    foreach ($custom_hooks['actions'][$hook_name] as $priority => $callbacks) {
-        if (in_array($callback, $callbacks, true)) {
-            return true;
-        }
-    }
+	foreach ($custom_hooks['actions'][$hook_name] as $priority => $callbacks) {
+		if (in_array($callback, $callbacks, TRUE)) {
+			return TRUE;
+		
+		}
+	}
 
-    return false;
-}
+	return FALSE;
+}//end has_action()
+
 
 /**
  * Removes all filters from a hook.
  *
- * @param string $hook_name The name of the filter hook.
- * @param int    $priority  Optional. The priority number to remove. Default null.
+ * @param string  $hook_name The name of the filter hook.
+ * @param integer $priority  Optional. The priority number to remove. Default null.
  */
-function remove_all_filters(string $hook_name, int $priority = null): void
-{
+function remove_all_filters(string $hook_name, int $priority = NULL): void {
     global $custom_hooks;
 
     if (isset($custom_hooks['filters'][$hook_name])) {
-        if ($priority === null) {
-            unset($custom_hooks['filters'][$hook_name]);
+        if ($priority === NULL) {
+             unset($custom_hooks['filters'][$hook_name]);
+        
         } else {
             unset($custom_hooks['filters'][$hook_name][$priority]);
+         
         }
     }
-}
+}//end remove_all_filters()
+
 
 /**
  * Removes all actions from a hook.
  *
- * @param string $hook_name The name of the action hook.
- * @param int    $priority  Optional. The priority number to remove. Default null.
+ * @param string  $hook_name The name of the action hook.
+ * @param integer $priority  Optional. The priority number to remove. Default null.
  */
-function remove_all_actions(string $hook_name, int $priority = null): void
-{
+function remove_all_actions(string $hook_name, int $priority = NULL): void {
     global $custom_hooks;
 
     if (isset($custom_hooks['actions'][$hook_name])) {
-        if ($priority === null) {
-            unset($custom_hooks['actions'][$hook_name]);
+        if ($priority === NULL) {
+             unset($custom_hooks['actions'][$hook_name]);
+        
         } else {
             unset($custom_hooks['actions'][$hook_name][$priority]);
+         
         }
     }
-}
+}//end remove_all_actions()
+

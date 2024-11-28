@@ -1,0 +1,28 @@
+{
+    "name": "dev-connect/backend",
+    "description": "Devconnect Backend",
+    "type": "project",
+    "require": {
+        "lbuchs/webauthn": "dev-master"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DevConnect\\Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Shubham Kumar Bansal",
+            "email": "shub@shubkb.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "scripts": {
+        "phpcs": "./vendor/bin/phpcs -q .",
+        "phpcbf": "./vendor/bin/phpcbf -q ."
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    }
+}
