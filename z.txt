@@ -325,3 +325,88 @@ Day - 14
 - #34
 - #35
 - #36
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Login Functions
+signon() - Log in a user
+logout() - Log out current user
+set_auth_cookie()
+update_auth_cookie()
+remove_auth_cookie()
+validate_auth_cookie() - Validate authentication cookie
+is_user_logged_in() - Check if user is currently logged in
+
+- User Creation and Management Functions:
+create_user() - Create a new user
+insert_user() - Insert or update a user
+update_user() - Update an existing user
+get_user_by() - Retrieve user by various fields
+get_userdata() - Get user data by ID
+username_exists() - Check if username already exists
+email_exists() - Check if email already exists
+delete_user() - Delete a user
+delete_users() - Delete multiple users
+
+- User Role and Capability Functions:
+current_user_can() - Check user capabilities
+user_can() - Check specific user's capabilities
+add_role() - Add a new user role
+remove_role() - Remove a user role
+get_role() - Get details of a specific role
+add_cap() - Add a capability to a role
+remove_cap() - Remove a capability from a role
+- 
+User Meta Functions:
+add_user_meta() - Add user metadata
+update_user_meta() - Update user metadata
+get_user_meta() - Retrieve user metadata
+delete_user_meta() - Delete user metadata
+
+- Password-related Functions:
+set_password() - Set a user's password
+generate_password() - Generate a random password
+hash_password() - Hash a password
+check_password() - Check a password against stored hash
+
+- User Session Functions:
+get_session_token() - Get current user's session token
+destroy_current_session() - Destroy current user session
+
+- User Query Functions:
+get_users() - Retrieve list of users with advanced filtering
+count_users() - Count users by role
+
+
+
+
+
+
+define('DB_HOST', 'srv1640.hstgr.io:3306');
+define('DB_USER', 'u788505671_dev_connect');
+define('DB_PASS', 'Shubham07@kb#dev_connect');
+define('DB_NAME', 'u788505671_dev_connect');
