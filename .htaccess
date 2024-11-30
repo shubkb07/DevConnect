@@ -1,0 +1,28 @@
+RewriteEngine On
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect .htaccess file
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Redirect admin requests
+RewriteRule ^admin/?$ /index.php [L,QSA]
+
+# Redirect all non-existing files/directories to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.*)$ /index.php [L,QSA]
+
+
+<IfModule mod_headers.c>
+    # Add Accept-CH header
+    Header set Accept-CH "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Model, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-Prefers-Color-Scheme, Sec-CH-UA-Arch, Sec-CH-UA-Bitness"
+
+    # Add Permissions-Policy header
+    Header set Permissions-Policy "ch-ua=*, ch-ua-mobile=*, ch-ua-platform=*, ch-ua-model=*, ch-ua-full-version=*, ch-ua-full-version-list=*, ch-prefers-color-scheme=*, ch-ua-arch=*, ch-ua-bitness=*"
+</IfModule>
