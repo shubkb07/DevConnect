@@ -1,14 +1,22 @@
 RewriteEngine On
 
-# Redirect any request starting with /admin to /root/index.php
-RewriteCond %{REQUEST_URI} ^/admin
-RewriteRule ^(.*)$ /root/index.php [L,QSA]
+# Disable directory browsing
+Options -Indexes
 
-# Check if the requested file or directory does not exist
+# Protect .htaccess file
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Redirect admin requests
+RewriteRule ^admin/?$ /index.php [L,QSA]
+
+# Redirect all non-existing files/directories to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-# Rewrite all non-existent requests to /root/index.php
-RewriteRule ^(.*)$ /root/index.php [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.*)$ /index.php [L,QSA]
 
 
 <IfModule mod_headers.c>
