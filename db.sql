@@ -44,6 +44,7 @@ CREATE TABLE comments (
 	comment_ID bigint(20) unsigned NOT NULL auto_increment,
 	comment_post_ID bigint(20) unsigned NOT NULL default '0',
 	comment_author tinytext NOT NULL,
+	comment_reputaion int(11) NOT NULL default '0',
 	comment_author_email varchar(100) NOT NULL default '',
 	comment_author_url varchar(200) NOT NULL default '',
 	comment_author_IP varchar(100) NOT NULL default '',
@@ -87,6 +88,7 @@ CREATE TABLE posts (
 	post_title text NOT NULL,
 	post_excerpt text NOT NULL,
 	post_status varchar(20) NOT NULL default 'publish',
+	post_reputaion int(11) NOT NULL default '0',
 	comment_status varchar(20) NOT NULL default 'open',
 	post_name varchar(200) NOT NULL default '',
 	post_modified_gmt datetime NOT NULL default '0000-00-00 00:00:00',
@@ -126,3 +128,9 @@ CREATE TABLE usermeta (
 	KEY user_id (user_id),
 	KEY meta_key (meta_key($max_index_length))
 ) $charset_collate;
+
+
+
+
+INSERT INTO `options` (`option_name`, `option_value`, `autoload`) VALUES
+('roles', 'a:2:{s:5:"admin";a:2:{s:4:"name";s:13:"Administrator";s:12:"capabilities";a:10:{s:14:"manage_options";b:1;s:10:"edit_posts";b:1;s:11:"edit_users";b:1;s:12:"delete_users";b:1;s:12:"create_posts";b:1;s:13:"publish_posts";b:1;s:11:"edit_pages";b:1;s:16:"manage_categories";b:1;s:18:"moderate_comments";b:1;s:13:"manage_roles";b:1;}}s:10:"subscriber";a:2:{s:4:"name";s:11:"Subscriber";s:12:"capabilities";a:4:{s:4:"read";b:1;s:12:"create_posts";b:1;s:10:"edit_posts";b:1;s:12:"delete_posts";b:1;}}}', 'yes');

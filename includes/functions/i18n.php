@@ -10,20 +10,21 @@
 
 // Ensure no direct access
 defined('ABSPATH') || exit;
-
-/**
+/*
  * Global array to store translations.
  *
  * @var array
  */
-$GLOBALS['global_translations'] = [];
-
-/**
+$GLOBALS['global_translations'] = array();
+/*
  * Global variable to store the current locale.
  *
  * @var string
  */
-$GLOBALS['current_locale'] = 'en_US'; // Default locale
+$GLOBALS['current_locale'] = 'en_US';
+
+// Default locale
+
 
 /**
  * Initializes the current locale from the 'language' cookie.
@@ -31,44 +32,47 @@ $GLOBALS['current_locale'] = 'en_US'; // Default locale
  */
 function init_locale_from_cookie(): void
 {
-    if (isset($_COOKIE['language'])) {
-        $locale = sanitize_locale_name($_COOKIE['language']);
-        if (!empty($locale)) {
-            set_locale($locale);
-        }
-    }
-}
+	if (isset($_COOKIE['language'])) {
+		$locale = sanitize_locale_name($_COOKIE['language']);
+		if (! empty($locale)) {
+			set_locale($locale);
+		}
+	}
+}//end init_locale_from_cookie()
+
 
 // Initialize the locale from the cookie
 init_locale_from_cookie();
+
 
 /**
  * Sets the current locale.
  *
  * @param string $locale The locale to set.
  */
-function set_locale(string $locale): void
-{
-    global $current_locale;
+function set_locale(string $locale): void {
+	global $current_locale;
 
-    // Sanitize the locale name
-    $locale = sanitize_locale_name($locale);
 
-    if (!empty($locale)) {
-        $current_locale = $locale;
-    }
-}
+// Sanitize the locale name
+	$locale = sanitize_locale_name($locale);
+
+	if (! empty($locale)) {
+		$current_locale = $locale;
+	}
+}//end set_locale()
+
 
 /**
  * Gets the current locale.
  *
  * @return string The current locale.
  */
-function get_locale(): string
-{
-    global $current_locale;
-    return $current_locale;
-}
+function get_locale(): string {
+	global $current_locale;
+	return $current_locale;
+}//end get_locale()
+
 
 /**
  * Registers a single translation.
@@ -80,75 +84,80 @@ function get_locale(): string
  * @param string|null $locale          Optional. The locale for which the translation is registered.
  *                                     Default is null, which means the current locale is used.
  */
-function register_translation(string $domain, string $text, string $translated_text, ?string $context = null, ?string $locale = null): void
-{
-    global $global_translations;
+function register_translation(string $domain, string $text, string $translated_text, ?string $context = NULL, ?string $locale = NULL): void {
+	global $global_translations;
 
-    // Use the provided locale or default to current locale
-    $locale = $locale ?? get_locale();
 
-    // Initialize the domain if not set
-    if (!isset($global_translations[$domain])) {
-        $global_translations[$domain] = [];
-    }
+// Use the provided locale or default to current locale
+	$locale = ($locale ?? get_locale());
 
-    // Initialize the locale for the domain if not set
-    if (!isset($global_translations[$domain][$locale])) {
-        $global_translations[$domain][$locale] = ['no_context' => [], 'contexts' => []];
-    }
 
-    if ($context === null) {
-        // No context
-        $global_translations[$domain][$locale]['no_context'][$text] = $translated_text;
-    } else {
-        // With context
-        if (!isset($global_translations[$domain][$locale]['contexts'][$context])) {
-            $global_translations[$domain][$locale]['contexts'][$context] = [];
-        }
-        $global_translations[$domain][$locale]['contexts'][$context][$text] = $translated_text;
-    }
-}
+// Initialize the domain if not set
+	if (! isset($global_translations[$domain])) {
+		$global_translations[$domain] = array();
+	}
+
+ // end if
+	if (! isset($global_translations[$domain][$locale])) {
+		$global_translations[$domain][$locale] = array(
+			'no_context' => array(),
+			'contexts'   => array(),
+		);
+	}
+
+	if ($context === NULL) {
+		  // end if
+		 $global_translations[$domain][$locale]['no_context'][$text] = $translated_text;
+	} else {
+	// With context
+		if (! isset($global_translations[$domain][$locale]['contexts'][$context])) {
+			$global_translations[$domain][$locale]['contexts'][$context] = array();
+		}
+		  $global_translations[$domain][$locale]['contexts'][$context][$text] = $translated_text;
+	}
+}//end register_translation()
+
 
 /**
  * Registers a text domain with translations.
  *
- * @param string      $domain        The text domain.
- * @param array       $translations  An associative array of translations.
- *                                   Format: array('original_text' => 'translated_text', ...)
- * @param string|null $locale        Optional. The locale for which the translations are registered.
- *                                   Default is null, which means the current locale is used.
+ * @param string      $domain       The text domain.
+ * @param array       $translations An associative array of translations.
+ *                                  Format: array('original_text' => 'translated_text', ...)
+ * @param string|null $locale       Optional. The locale for which the translations are registered.
+ *                                  Default is null, which means the current locale is used.
  */
-function register_text_domain(string $domain, array $translations, ?string $locale = null): void
-{
-    foreach ($translations as $original_text => $translated_text) {
-        // Ensure both original and translated texts are strings
-        if (is_string($original_text) && is_string($translated_text)) {
-            register_translation($domain, $original_text, $translated_text, null, $locale);
-        }
-    }
-}
+function register_text_domain(string $domain, array $translations, ?string $locale = NULL): void {
+	foreach ($translations as $original_text => $translated_text) {
+  // Ensure both original and translated texts are strings
+		if (is_string($original_text) && is_string($translated_text)) {
+			register_translation($domain, $original_text, $translated_text, NULL, $locale);
+		}
+	}
+}//end register_text_domain()
+
 
 /**
  * Registers context-based translations for a text domain.
  *
- * @param string      $domain        The text domain.
- * @param array       $translations  An associative array of context-based translations.
- *                                   Format: array('context' => array('original_text' => 'translated_text', ...), ...)
- * @param string|null $locale        Optional. The locale for which the translations are registered.
- *                                   Default is null, which means the current locale is used.
+ * @param string      $domain       The text domain.
+ * @param array       $translations An associative array of context-based translations.
+ *                                  Format: array('context' => array('original_text' => 'translated_text', ...), ...)
+ * @param string|null $locale       Optional. The locale for which the translations are registered.
+ *                                  Default is null, which means the current locale is used.
  */
-function register_context_translations(string $domain, array $translations, ?string $locale = null): void
-{
-    foreach ($translations as $context => $context_translations) {
-        if (is_array($context_translations)) {
-            foreach ($context_translations as $original_text => $translated_text) {
-                if (is_string($original_text) && is_string($translated_text)) {
-                    register_translation($domain, $original_text, $translated_text, $context, $locale);
-                }
-            }
-        }
-    }
-}
+function register_context_translations(string $domain, array $translations, ?string $locale = NULL): void {
+	foreach ($translations as $context => $context_translations) {
+		if (is_array($context_translations)) {
+			foreach ($context_translations as $original_text => $translated_text) {
+				if (is_string($original_text) && is_string($translated_text)) {
+					register_translation($domain, $original_text, $translated_text, $context, $locale);
+				}
+			}
+		}
+	}
+}//end register_context_translations()
+
 
 /**
  * Translates text.
@@ -158,33 +167,33 @@ function register_context_translations(string $domain, array $translations, ?str
  *
  * @return string The translated text.
  */
-function translate(string $text, string $domain = 'default'): string
-{
-    global $global_translations;
+function translate(string $text, string $domain = 'default'): string {
+	global $global_translations;
 
-    $locale = get_locale();
+	$locale = get_locale();
 
-    if (isset($global_translations[$domain][$locale]['no_context'][$text])) {
-        $translated = $global_translations[$domain][$locale]['no_context'][$text];
+	if (isset($global_translations[$domain][$locale]['no_context'][$text])) {
+		$translated = $global_translations[$domain][$locale]['no_context'][$text];
 
-        /**
-         * Filter the translated text.
-         *
-         * @param string $translated The translated text.
-         * @param string $text       The original text.
-         * @param string $domain     The text domain.
-         */
-        return apply_filters('translate', $translated, $text, $domain);
-    }
+		/*
+		 * Filter the translated text.
+		 *
+		 * @param string $translated The translated text.
+		 * @param string $text       The original text.
+		 * @param string $domain     The text domain.
+		 */
+		return apply_filters('translate', $translated, $text, $domain);
+	}
 
-    /**
-     * Filter the original text if no translation is found.
-     *
-     * @param string $text   The original text.
-     * @param string $domain The text domain.
-     */
-    return apply_filters('translate', $text, $text, $domain);
-}
+ /*
+  * Filter the original text if no translation is found.
+	 *
+  * @param string $text   The original text.
+	 * @param string $domain The text domain.
+  */
+	return apply_filters('translate', $text, $text, $domain);
+}//end translate()
+
 
 /**
  * Translates text with context.
@@ -195,35 +204,35 @@ function translate(string $text, string $domain = 'default'): string
  *
  * @return string The translated text.
  */
-function translate_with_gettext_context(string $text, string $context, string $domain = 'default'): string
-{
-    global $global_translations;
+function translate_with_gettext_context(string $text, string $context, string $domain = 'default'): string {
+	global $global_translations;
 
-    $locale = get_locale();
+	$locale = get_locale();
 
-    if (isset($global_translations[$domain][$locale]['contexts'][$context][$text])) {
-        $translated = $global_translations[$domain][$locale]['contexts'][$context][$text];
+	if (isset($global_translations[$domain][$locale]['contexts'][$context][$text])) {
+		$translated = $global_translations[$domain][$locale]['contexts'][$context][$text];
 
-        /**
-         * Filter the translated text with context.
-         *
-         * @param string $translated The translated text.
-         * @param string $text       The original text.
-         * @param string $context    The context.
-         * @param string $domain     The text domain.
-         */
-        return apply_filters('translate_with_gettext_context', $translated, $text, $context, $domain);
-    }
+		/*
+		 * Filter the translated text with context.
+		 *
+		 * @param string $translated The translated text.
+		 * @param string $text       The original text.
+		 * @param string $context    The context.
+		 * @param string $domain     The text domain.
+		 */
+		return apply_filters('translate_with_gettext_context', $translated, $text, $context, $domain);
+	}
 
-    /**
-     * Filter the original text if no translation is found.
-     *
-     * @param string $text    The original text.
-     * @param string $context The context.
-     * @param string $domain  The text domain.
-     */
-    return apply_filters('translate_with_gettext_context', $text, $text, $context, $domain);
-}
+ /*
+  * Filter the original text if no translation is found.
+	 *
+  * @param string $text    The original text.
+	* @param string $context The context.
+  * @param string $domain  The text domain.
+  */
+	return apply_filters('translate_with_gettext_context', $text, $text, $context, $domain);
+}//end translate_with_gettext_context()
+
 
 /**
  * Retrieves the translated text.
@@ -233,10 +242,10 @@ function translate_with_gettext_context(string $text, string $context, string $d
  *
  * @return string The translated text.
  */
-function __(string $text, string $domain = 'default'): string
-{
-    return translate($text, $domain);
-}
+function __(string $text, string $domain = 'default'): string {
+	return translate($text, $domain);
+}//end __()
+
 
 /**
  * Displays the translated text.
@@ -244,10 +253,10 @@ function __(string $text, string $domain = 'default'): string
  * @param string $text   The text to translate and display.
  * @param string $domain Optional. The text domain. Default 'default'.
  */
-function _e(string $text, string $domain = 'default'): void
-{
-    echo translate($text, $domain);
-}
+function _e(string $text, string $domain = 'default'): void {
+	echo translate($text, $domain);
+}//end _e()
+
 
 /**
  * Retrieves the translated text with context.
@@ -260,8 +269,9 @@ function _e(string $text, string $domain = 'default'): void
  */
 function _x(string $text, string $context, string $domain = 'default'): string
 {
-    return translate_with_gettext_context($text, $context, $domain);
-}
+	return translate_with_gettext_context($text, $context, $domain);
+}//end _x()
+
 
 /**
  * Displays the translated text with context.
@@ -272,8 +282,10 @@ function _x(string $text, string $context, string $domain = 'default'): string
  */
 function _ex(string $text, string $context, string $domain = 'default'): void
 {
-    echo translate_with_gettext_context($text, $context, $domain);
-}
+	echo translate_with_gettext_context($text, $context, $domain);
+
+}//end _ex()
+
 
 /**
  * Retrieves the translated text and escapes it for use in an attribute.
@@ -285,18 +297,20 @@ function _ex(string $text, string $context, string $domain = 'default'): void
  */
 function esc_attr__(string $text, string $domain = 'default'): string
 {
-    $translated = __( $text, $domain );
-    $escaped = esc_attr( $translated );
+	$translated = __($text, $domain);
+	$escaped    = esc_attr($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $domain     The text domain.
-     */
-    return apply_filters('esc_attr__', $escaped, $text, $domain);
-}
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $domain     The text domain.
+   */
+	return apply_filters('esc_attr__', $escaped, $text, $domain);
+
+}//end esc_attr__()
+
 
 /**
  * Retrieves the translated text and escapes it for use in HTML output.
@@ -308,18 +322,20 @@ function esc_attr__(string $text, string $domain = 'default'): string
  */
 function esc_html__(string $text, string $domain = 'default'): string
 {
-    $translated = __( $text, $domain );
-    $escaped = esc_html( $translated );
+	$translated = __($text, $domain);
+	$escaped    = esc_html($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $domain     The text domain.
-     */
-    return apply_filters('esc_html__', $escaped, $text, $domain);
-}
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $domain     The text domain.
+   */
+	return apply_filters('esc_html__', $escaped, $text, $domain);
+
+}//end esc_html__()
+
 
 /**
  * Displays the translated text, escaped for use in an attribute.
@@ -329,20 +345,22 @@ function esc_html__(string $text, string $domain = 'default'): string
  */
 function esc_attr_e(string $text, string $domain = 'default'): void
 {
-    $translated = __( $text, $domain );
-    $escaped = esc_attr( $translated );
+	$translated = __($text, $domain);
+	$escaped    = esc_attr($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $domain     The text domain.
-     */
-    $filtered = apply_filters('esc_attr_e', $escaped, $text, $domain);
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $domain     The text domain.
+   */
+	$filtered = apply_filters('esc_attr_e', $escaped, $text, $domain);
 
-    echo $filtered;
-}
+	echo $filtered;
+
+}//end esc_attr_e()
+
 
 /**
  * Displays the translated text, escaped for use in HTML output.
@@ -352,20 +370,22 @@ function esc_attr_e(string $text, string $domain = 'default'): void
  */
 function esc_html_e(string $text, string $domain = 'default'): void
 {
-    $translated = __( $text, $domain );
-    $escaped = esc_html( $translated );
+	$translated = __($text, $domain);
+	$escaped    = esc_html($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $domain     The text domain.
-     */
-    $filtered = apply_filters('esc_html_e', $escaped, $text, $domain);
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $domain     The text domain.
+   */
+	$filtered = apply_filters('esc_html_e', $escaped, $text, $domain);
 
-    echo $filtered;
-}
+	echo $filtered;
+
+}//end esc_html_e()
+
 
 /**
  * Retrieves the translated text with context and escapes it for use in an attribute.
@@ -378,19 +398,21 @@ function esc_html_e(string $text, string $domain = 'default'): void
  */
 function esc_attr_x(string $text, string $context, string $domain = 'default'): string
 {
-    $translated = _x( $text, $context, $domain );
-    $escaped = esc_attr( $translated );
+	$translated = _x($text, $context, $domain);
+	$escaped    = esc_attr($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $context    The context.
-     * @param string $domain     The text domain.
-     */
-    return apply_filters('esc_attr_x', $escaped, $text, $context, $domain);
-}
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $context    The context.
+   * @param string $domain     The text domain.
+   */
+	return apply_filters('esc_attr_x', $escaped, $text, $context, $domain);
+
+}//end esc_attr_x()
+
 
 /**
  * Retrieves the translated text with context and escapes it for use in HTML output.
@@ -403,16 +425,17 @@ function esc_attr_x(string $text, string $context, string $domain = 'default'): 
  */
 function esc_html_x(string $text, string $context, string $domain = 'default'): string
 {
-    $translated = _x( $text, $context, $domain );
-    $escaped = esc_html( $translated );
+	$translated = _x($text, $context, $domain);
+	$escaped    = esc_html($translated);
 
-    /**
-     * Filter the escaped, translated text.
-     *
-     * @param string $escaped    The escaped, translated text.
-     * @param string $text       The original text.
-     * @param string $context    The context.
-     * @param string $domain     The text domain.
-     */
-    return apply_filters('esc_html_x', $escaped, $text, $context, $domain);
-}
+  /*
+   * Filter the escaped, translated text.
+	 *
+   * @param string $escaped    The escaped, translated text.
+   * @param string $text       The original text.
+	 * @param string $context    The context.
+   * @param string $domain     The text domain.
+   */
+	return apply_filters('esc_html_x', $escaped, $text, $context, $domain);
+
+}//end esc_html_x()

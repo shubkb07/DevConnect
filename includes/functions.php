@@ -11,13 +11,17 @@
  */
 
 $funtions_files_names = array(
-    'hook',
-    'kses',
-    'escaping',
-    'sanitization',
-    'i18n',
+	'configuration',
+	'connection',
+	'hook',
+	'kses',
+	'escaping',
+	'sanitization',
+	'i18n',
+	'options',
+	'user'
 );
 
 foreach ($funtions_files_names as $file_name) {
-    require_once ABSPATH . 'includes/functions/' .$file_name . '.php';
+	include_once ABSPATH . 'includes/functions/' . $file_name . '.php';
 }

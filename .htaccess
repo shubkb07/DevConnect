@@ -1,0 +1,29 @@
+RewriteEngine On
+
+# Redirect all HTTP requests to HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Ensure the URL doesn't include ports
+RewriteCond %{HTTP_HOST} ^(.*):[0-9]+$
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+# Redirect any request starting with /admin to /root/index.php
+RewriteCond %{REQUEST_URI} ^/admin
+RewriteRule ^(.*)$ /root/index.php [L,QSA]
+
+# Check if the requested file or directory does not exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Rewrite all non-existent requests to /root/index.php
+RewriteRule ^(.*)$ /root/index.php [L,QSA]
+
+
+
+<IfModule mod_headers.c>
+    # Add Accept-CH header
+    Header set Accept-CH "Sec-CH-UA, Sec-CH-UA-Mobile, Sec-CH-UA-Platform, Sec-CH-UA-Model, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-Prefers-Color-Scheme, Sec-CH-UA-Arch, Sec-CH-UA-Bitness"
+
+    # Add Permissions-Policy header
+    Header set Permissions-Policy "ch-ua=*, ch-ua-mobile=*, ch-ua-platform=*, ch-ua-model=*, ch-ua-full-version=*, ch-ua-full-version-list=*, ch-prefers-color-scheme=*, ch-ua-arch=*, ch-ua-bitness=*"
+</IfModule>
