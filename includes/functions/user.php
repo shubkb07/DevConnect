@@ -802,7 +802,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         'expiration' => $expiration,
     );
 
-    $signon_sessions = get_user_meta('session_token');
+    $signon_sessions = get_user_meta($user_id, 'session_token');
     var_dump('mjnsnfvjspw');
     var_dump($signon_sessions);
     if ( $signon_sessions ) {
