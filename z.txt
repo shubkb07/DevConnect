@@ -410,3 +410,280 @@ define('DB_HOST', 'srv1640.hstgr.io:3306');
 define('DB_USER', 'u788505671_dev_connect');
 define('DB_PASS', 'Shubham07@kb#dev_connect');
 define('DB_NAME', 'u788505671_dev_connect');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- write code for /root/admin/admin.php, /root/admin/assets/css/admin.js, /root/admin/assets/js/admin.js, /root/admin/components.php, DOCUMENT.md
+
+- which i will user at /admin and /admin{pages} dynamicly all call /root/index.php
+
+- which will be load like include_once ABSPATH . 'admin/admin.php'; in /root/index.php
+
+- admin.php will only load if ABSPATH is defined and includes ABSPATH . 'admin/components.php';
+
+- admin.php be like have html, in which it have Sidebar Navigation, on top of menu, there will be texted logo, menu have sub menu, for example similar like wordpress.
+- Sidebar can collapse too.
+- Give function, from which we can add page in Side bar like add_menu('slug,'Name','URL', content_callback); add_sub_menu('slug,main_menu_slug,'Name','URL', content_callback); 
+- On Page side there will Name of page on tip left, or say ouside of sidebar.
+- It is Desktop First, as dashboard as good to manage in Desktop screen
+- still It must be Fully Mobile responsive and support all type of differnt screen.
+- on mobile side menu will have open option on Top left and on center logo when menu is closed,
+- on top right on mobile and desktop and all screen option to switch dark and light by clicking on icon of moon and sun.
+- Use tailwind CSS and for custom CSS use in admin.css -<script src="https://cdn.tailwindcss.com?plugins="></script> add plugin in url as required.
+- Icon will be come from matiral icons <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+- you can add more library to make it simple for you but i want full code of all 100 components mention below. if use more library, add there them in head or body inside admin.php which may also need in components, where you find it more good.
+- For page make all components mentioned below in way of function:
+* Charts and Visualizations:
+- Line Chart
+- Bar Chart
+- Pie Chart
+- Donut Chart
+- Area Chart
+- Scatter Plot
+- Bubble Chart
+- Radar Chart
+- Heatmap
+- Treemap
+- Waterfall Chart
+- Candlestick Chart
+- Sankey Diagram
+- Box and Whisker Plot
+
+* Input Components:
+- Text Input
+- Number Input
+- Password Input
+- Email Input
+- Search Input
+- Autocomplete Input
+- Select/Dropdown
+- Multi-select
+- Checkbox
+- Radio Button
+- Toggle Switch
+- Date Picker
+- Time Picker
+- Date Range Picker
+- Color Picker
+- File Upload
+- Slider
+- Rating Input
+
+*Navigation Components:
+- Sidebar Menu
+- Top Navigation Bar
+- Breadcrumbs
+- Tabs
+- Accordion
+- Dropdown Menu
+- Pagination
+- Side Panel
+
+* Data Display Components:
+- Data Table
+- Sortable Table
+- Filterable Table
+- Card
+- List View
+- Grid View
+- Timeline
+- Progress Bar
+- Stat Card/Metric Card
+- Alert/Notification Box
+- Tooltip
+- Modal/Dialog
+- Popover
+
+* Interactive Elements:
+- Buttons
+- Icon Buttons
+- Dropdown Buttons
+- Split Buttons
+- Accordion
+- Collapsible Sections
+- Drag and Drop Interfaces
+- Resizable Containers
+- Sortable Lists
+
+* Feedback and Notification Components:
+- Toast/Snackbar with or without message - Normal, Success, Denger, Warning, Error, Alert, Update, Notification, Horray!
+- Alert Banners
+- Loading Spinner
+- Progress Indicator
+- Confirmation Dialog
+
+* Advanced Visualization Components:
+- Geographic Map
+- Interactive World Map
+- Choropleth Map for states of world
+- Network Graph
+- Funnel Chart
+- Spark Lines
+
+* Data Filtering and Manipulation:
+- Filter Sidebar
+- Multi-level Filter
+- Advanced Search
+- Quick Filters
+- Filter Chips
+- Sort Dropdown
+
+* User and Profile Components:
+- Avatar
+- User Profile Card
+- Login/Signup Form
+- Permission Level Indicator
+- User Status
+- Role-based Access Control Indicators
+
+* Miscellaneous Components:
+- Dark/Light Mode Toggle
+- Language Selector
+- Responsive Grid System
+- Card Deck
+- Carousel
+- Wizard/Multi-step Form
+- Embedded Media (Video & Music) Player with custom controls
+- Share Buttons
+
+* Specialized Dashboards Components:
+- Performance Metrics
+- KPI Indicators
+- Comparison Widgets
+- Trend Indicators
+- Anomaly Detection Visualization
+- Predictive Analytics Visualization
+
+* Interaction and Utility Components:
+- Clipboard Copy Button
+- Zoom Controls
+- Fullscreen Toggle
+- Responsive Layout Shifter
+- Scroll Progress Indicator
+
+* Complex Data Representations:
+- Sankey Diagram
+- Parallel Coordinates Plot
+- Network Relationship Diagram
+
+- Make sure to give good function parameter for all 100 components and there attributes whereever needed.
+
+- Give full code without missing anything component function, in functions also have different coloring theme option.
+
+- Everything support good animation on load in desktop and scroll on fully supported.
+
+- DOCUMENT.md will contains Function, example, explanation and usage of all 100 components things mentioned above.
+
+- Also create an PHP function, which i can call to can things in code when its added in admin.php file.
+
+- admin.php file be like
+//php start
+// check ABSPATH,
+// include components.php
+// here i will code route myself to set page content with use of component functions and menu functions to use in main body of content.
+// html start add tailwind and icon library in head with admin.css, and admin.js in body end.
+// In body sidebar load dynamicly with function which have added every menu name user in $sidebar global variable
+
+
+// in end whole code must optimized and processed for best practice like pre-load, lazy loading, fast, reliable.
+
+- Don't add any script and script tag inside component functions, it all will go to admin.js, and will will also handle if same component use multiple time in same page.
+
+- Make sure to add error handling in PHP and JS both.
+
+- I am saying again, include library and packages directly in admin.php code if need in any component function, so no need to install any package in project, just include it in admin.php from CDN link.
+
+- Give me full code of all files without any placeholder comment that i will do it myself. full code mean full code including all 100 components.
+
+- Don't comment like 
+// Add more mappings as needed
+// or add more here
+// Add others here
+complete means all cases completed, fully production ready code.
+
+- I know code is too big, take your time to write it. I will ask files one by one in order admin.php, components.php, admin.css, admin.js and DOCUMENT.md, first give me admin.php.
