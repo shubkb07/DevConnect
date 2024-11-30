@@ -806,7 +806,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         while (count($signon_sessions) >= 10) {
             array_shift($signon_sessions);
         }
-        array_push($a, $session_created);
+        array_push($signon_sessions, $session_created);
     } else {
         $signon_sessions = array($session_created);
     }
