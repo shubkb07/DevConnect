@@ -16,7 +16,7 @@ if (! defined( 'ABSPATH' ) ) {
 }
 
 // Get the request URI.
-$_URI =  explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$_URI = explode('/', trim(explode('?', trim($_SERVER['REQUEST_URI'], '/'))[0], '/'));
 
 if ( file_exists( ABSPATH . 'config.php' ) ) {
 	include_once ABSPATH . 'config.php';
