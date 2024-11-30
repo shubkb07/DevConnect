@@ -802,20 +802,14 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         'expiration' => $expiration,
     );
 
-    $signon_sessions = get_user_meta($user_id, 'session_token');
-    var_dump('mjnsnfvjspw');
-    var_dump($signon_sessions);
-    if ( $signon_sessions ) {
-        var_dump('sfjkdsg');
+    if ( $signon_sessions = get_user_meta($user_id, 'session_token') ) {
         while (count($signon_sessions) >= 10) {
             array_shift($signon_sessions);
         }
         array_push($signon_sessions, $session_created);
     } else {
-        var_dump('pkfdnfs');
         $signon_sessions = array($session_created);
     }
-    die();
 
     // Update usermeta
     update_user_meta($user_id, 'session_token', serialize($signon_sessions));
