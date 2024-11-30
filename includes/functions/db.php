@@ -153,6 +153,45 @@ try {
         }
     }
 
+    sleep(2);
+
+    // Insert as array(tablename=>array(array(columnname1=>value1,columnname2=>value2),array(columnname1=>value1,columnname2=>value2)),tablename=>array(array(columnname1=>value1,columnname2=>value2),array(columnname1=>value1,columnname2=>value2))).
+    $insert = array(
+        "{$table_prefix}options" => array(
+            array(
+                "site_url" => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http' . '://' . $_SERVER['HTTP_HOST'],
+                "roles"=>serialize(
+                    array (
+                        'admin' => array (
+                            'name' => 'Administrator',
+                            'capabilities' => array (
+                                'manage_options' => true,
+                                'edit_posts' => true,
+                                'edit_users' => true,
+                                'delete_users' => true,
+                                'create_posts' => true,
+                                'publish_posts' => true,
+                                'edit_pages' => true,
+                                'manage_categories' => true,
+                                'moderate_comments' => true,
+                                'manage_roles' => true,
+                            ),
+                        ),
+                        'subscriber' => array (
+                            'name' => 'Subscriber',
+                            'capabilities' => array (
+                                'read' => true,
+                                'create_posts' => true,
+                                'edit_posts' => true,
+                                'delete_posts' => true,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    );
+
     // Close the connection.
     $mysqli->close();
 } catch (Exception $e) {
