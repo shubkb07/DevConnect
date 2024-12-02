@@ -45,7 +45,7 @@ if ( 1 === count($_URI) && $_URI[0] === 'login' ) {
 	exit();
 }
 
-if ( $_URI[0] === 'admin' ) {
+if ( $_URI[0] === 'admin' && is_user_logged_in() ) {
 	include_once ABSPATH . 'admin/admin.php';
 	exit();
 }
