@@ -6,3 +6,7 @@ if (!defined('ABSPATH')) {
 }
 
 global $menu;
+
+function add_menu($slug, $name, $n) {
+    
+}

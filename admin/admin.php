@@ -31,7 +31,7 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
     <link href="/admin/assets/css/flowbite.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/admin/assets/css/admin.css" rel="stylesheet">
-    <script script="/admin/assets/js/tailwind.config.js"></script>
+    <script src="/admin/assets/js/tailwind.config.js"></script>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
