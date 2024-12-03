@@ -9,56 +9,6 @@ if (!defined('ABSPATH')) {
 // Include the components.php file
 include_once ABSPATH . 'admin/components.php';
 
-// Initialize the global menus array
-global $menus;
-$menus = [];
-
-/**
- * Adds a main menu to the sidebar.
- *
- * @param string $slug Unique identifier for the menu.
- * @param string $name Display name of the menu.
- * @param string $url URL the menu links to.
- * @param callable $callback Function to generate the page content.
- * @param string $icon Material icon name.
- */
-function add_menu($slug, $name, $url, $callback, $icon = 'dashboard') {
-    global $menus;
-    $menus[$slug] = [
-        'slug' => $slug,
-        'name' => $name,
-        'url' => $url,
-        'callback' => $callback,
-        'icon' => $icon,
-        'sub_menu' => []
-    ];
-}
-
-/**
- * Adds a sub-menu under a main menu.
- *
- * @param string $slug Unique identifier for the sub-menu.
- * @param string $main_menu_slug The slug of the main menu to attach this sub-menu to.
- * @param string $name Display name of the sub-menu.
- * @param string $url URL the sub-menu links to.
- * @param callable $callback Function to generate the page content.
- * @param string $icon Material icon name.
- */
-function add_sub_menu($slug, $main_menu_slug, $name, $url, $callback, $icon = 'subdirectory_arrow_right') {
-    global $menus;
-    if (isset($menus[$main_menu_slug])) {
-        $menus[$main_menu_slug]['sub_menu'][$slug] = [
-            'slug' => $slug,
-            'name' => $name,
-            'url' => $url,
-            'callback' => $callback,
-            'icon' => $icon
-        ];
-    } else {
-        echo '<div class="text-red-500 p-4">Error: Main menu slug "' . htmlspecialchars($main_menu_slug) . '" not found.</div>';
-    }
-}
-
 // Example usage (You can remove or comment out these lines in production)
 /*
 add_menu('dashboard', 'Dashboard', '/admin/dashboard', 'dashboard_page_callback', 'dashboard');
@@ -79,45 +29,9 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
     <link href="/admin/assets/css/tailwind.min.css" rel="stylesheet">
     <!-- Flowbite CSS -->
     <link href="/admin/assets/css/flowbite.min.css" rel="stylesheet">
-    <style>
-        /* Optional: Customize the transition for dark mode toggle */
-        .transition-colors {
-            transition-property: background-color, border-color, color;
-            transition-duration: 300ms;
-            transition-timing-function: ease-in-out;
-        }
-
-        /* Active state styles */
-        .sidebar .active {
-            background-color: #e5e7eb;
-        }
-
-        .dark .sidebar .active {
-            background-color: #374151;
-        }
-
-        /* Indentation for sub-menu items */
-        .sidebar ul ul li a {
-            padding-left: 2.5rem;
-        }
-
-        :is(.dark .dark\:bg-gray-800) {
-            background-color: #212121;
-        }
-
-        :is(.dark .dark\:bg-gray-900) {
-            background-color: #121212;
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            plugins: [
-                require('flowbite/plugin')({
-                    charts: true,
-                }),
-            ]
-        }
-    </script>
+    <!-- Custom CSS -->
+    <link href="/admin/assets/css/admin.css" rel="stylesheet">
+    <script script="/admin/assets/js/tailwind.config.js"></script>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
@@ -440,8 +354,7 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
 
     <!-- Flowbite JS -->
     <script src="/admin/assets/js/flowbite.min.js"></script>
-    <script>
-    </script>
+    <script src="/admin/assets/js/admin.js"></script>
 
 </body>
 
