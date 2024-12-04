@@ -9,6 +9,8 @@ define('SECOND_IN_MILLISECONDS', 1000);
 define('SECOND_IN_MICROSECONDS', SECOND_IN_MILLISECONDS * 1000);
 define('SECOND_IN_NANOSECONDS', SECOND_IN_MICROSECONDS * 1000);
 
-// if (isset($_COOKIE[''])) {
-//     define('');
-// }
+if (isset($_COOKIE[''])) {
+    define('PREFERS_COLOR_SCHEME', $_COOKIE['']);
+} elseif (isset($_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'])) {
+    define('PREFERS_COLOR_SCHEME', $_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME']);
+}
