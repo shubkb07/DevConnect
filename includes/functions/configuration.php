@@ -8,3 +8,7 @@ define('MINUTE_IN_SECONDS', 60);
 define('SECOND_IN_MILLISECONDS', 1000);
 define('SECOND_IN_MICROSECONDS', SECOND_IN_MILLISECONDS * 1000);
 define('SECOND_IN_NANOSECONDS', SECOND_IN_MICROSECONDS * 1000);
+
+// if (isset($_COOKIE[''])) {
+//     define('');
+// }

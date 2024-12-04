@@ -64,6 +64,8 @@ if ( $_URI[0] === '' ) {
 		array(
 			'status' => 'ok',
 			'message' => 'Welcome to DevConnect API',
+			'user' => $user,
+			'server' => $_SERVER,
 		)
 	);
 } else {
@@ -72,6 +74,7 @@ if ( $_URI[0] === '' ) {
 			'status' => '404',
 			'message' => 'Not Found',
 			'user' => $user,
+			'server' => $_SERVER,
 		)
 	);
 }
