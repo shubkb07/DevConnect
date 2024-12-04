@@ -26,21 +26,13 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <meta http-equiv="refresh" content="60">
-    <!-- Tailwind CSS -->
-    <link href="/admin/assets/css/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS Script -->
+    <script src="/admin/assets/js/tailwind.min.js"></script>
     <!-- Flowbite CSS -->
     <link href="/admin/assets/css/flowbite.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/admin/assets/css/admin.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            plugins: [
-                require('flowbite/plugin')({
-                    charts: true,
-                }),
-            ]
-        }
-    </script>
+    <script src="/admin/assets/js/tailwind.config.js"></script>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
