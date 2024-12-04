@@ -95,7 +95,7 @@ function setData(name, value, options = {}) {
       trackedKeys.push(name);
       localStorage.setItem('trackedKeys', JSON.stringify(trackedKeys));
   }
-  return ( getCookie(name) === localStorage.getItem(name) === value ) && localStorage.getItem('trackedKeys').includes(name);
+  return (getCookie(name) === value) && (localStorage.getItem(name) === value) && localStorage.getItem('trackedKeys').includes(name);
 }
 
 function getData(name) {
