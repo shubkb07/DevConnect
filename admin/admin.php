@@ -26,8 +26,8 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <meta http-equiv="refresh" content="60">
-    <!-- Tailwind CSS Script -->
-    <script src="/admin/assets/js/tailwind.min.js"></script>
+    <!-- Tailwind CSS -->
+    <link href="/admin/assets/css/tailwind.min.css" rel="stylesheet">
     <!-- Flowbite CSS -->
     <link href="/admin/assets/css/flowbite.min.css" rel="stylesheet">
     <!-- Custom CSS -->
