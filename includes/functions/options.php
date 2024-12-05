@@ -77,10 +77,6 @@ function add_option($key, $value, $autoload = false, $checked = false) {
 function update_option($key, $value, $autoload = false) {
     global $db, $options;
 
-    if ($options[$key] !== null) {
-        return false; // Key already exists.
-    }
-
     // Check if the key exists in the database.
     $query = "SELECT COUNT(*) AS count FROM " . $db->prefix() . "options WHERE option_name = ?";
     $result = $db->execute_query($query, [$key], 's');

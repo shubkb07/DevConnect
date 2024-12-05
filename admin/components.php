@@ -6,15 +6,33 @@ if (!defined('ABSPATH')) {
 }
 
 global $menu;
+$menu = array();
 
-function add_menu($slug, $name, $submenu = false, $order, $options = array())
+function add_menu($slug, $name, $options)
 {
     global $menu;
-    if (!empty($menu_slug) && !empty($name)) {
-        if (! $submenu && (array_key_exists("callback", $options))) {
-        } elseif (! $submenu) {
-            throw new Exception('CallBack Required');
-        }
+    if (!empty($slug) && !empty($name) && !array_key_exists("callback", $options)) {
+        throw new Exception('CallBack, Slug and Name are required');
+    }
+    $menu[$slug] = array('name'=>$name,'options'=>$options, 'submenu'=>array());
+}
+
+function add_sub_menu($slug, $name, $parent_slug, $options) {
+    global $menu;
+
+    if (!empty($slug) && !empty($name) && !empty($parent_slug) && !array_key_exists("callback", $options)) {
+        throw new Exception('Callback, Slug, Name and Parant Slug are required');
+    }
+    if (!array_key_exists($parent_slug, $menu)) {
+        throw new Exception('Parent Slug does not exist');
+    }
+    $menu[$parent_slug]['submenu'][$slug] = array('name'=>$name,'options'=>$options);
+}
+
+$pages_files = scandir(ABSPATH . 'admin/pages');
+foreach ($pages_files as $file) {
+    if ($file != '.' && $file != '..') {
+        include_once ABSPATH . 'admin/pages/' . $file;
     }
 }
 
@@ -38,6 +56,77 @@ function get_head()
 <?php
 }
 
+function generate_sidebar_menu() {
+
+    global $menu;
+    // Start the unordered list with the specified classes
+    $html = '<ul class="space-y-2">';
+
+    // Iterate over each top-level menu item
+    foreach ($menu as $key => $item) {
+        // Sanitize the menu key for safe HTML attribute usage
+        $safe_key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+
+        // Check if the current menu item has a submenu
+        if (empty($item['submenu'])) {
+            // **No Submenu:** Generate a single menu item
+            $html .= '<li>';
+            $html .= '<a href="/admin/' . $key .'" class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">';
+            
+            // **Icon SVG:** You can customize or replace this SVG as needed
+            $html .= '<svg aria-hidden="true" class="w-6 h-6 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">';
+            $html .= '<path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>';
+            $html .= '<path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>';
+            $html .= '</svg>';
+
+            // **Menu Item Name**
+            $html .= '<span class="ml-3">' . htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8') . '</span>';
+
+            $html .= '</a>';
+            $html .= '</li>';
+        } else {
+            // **Has Submenu:** Generate a dropdown menu item
+            $html .= '<li>';
+            $html .= '<button type="button" class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-' . $safe_key . '" data-collapse-toggle="dropdown-' . $safe_key . '">';
+            
+            // **Icon SVG:** You can customize or replace this SVG as needed
+            $html .= '<svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">';
+            $html .= '<path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>';
+            $html .= '</svg>';
+
+            // **Menu Item Name**
+            $html .= '<span class="flex-1 ml-3 text-left whitespace-nowrap">' . htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8') . '</span>';
+
+            // **Dropdown Arrow SVG**
+            $html .= '<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">';
+            $html .= '<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>';
+            $html .= '</svg>';
+
+            $html .= '</button>';
+
+            // **Submenu List**
+            $html .= '<ul id="dropdown-' . $safe_key . '" class="hidden py-2 space-y-2">';
+            
+            // Iterate over each submenu item
+            foreach ($item['submenu'] as $subkey => $subitem) {
+                $html .= '<li>';
+                $html .= '<a href="/admin/' . $key . '/' . $subkey . '" class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100 group">';
+                $html .= htmlspecialchars($subitem['name'], ENT_QUOTES, 'UTF-8');
+                $html .= '</a>';
+                $html .= '</li>';
+            }
+
+            $html .= '</ul>';
+            $html .= '</li>';
+        }
+    }
+
+    // Close the unordered list
+    $html .= '</ul>';
+
+    return $html;
+}
+
 function get_navbar()
 {
 ?>
@@ -52,63 +141,7 @@ function get_navbar()
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">DevConnect</span>
                 </a>
                 <br>
-                <ul class="space-y-2">
-                    <!-- Overview -->
-                    <li>
-                        <a href="#"
-                            class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <!-- Icon -->
-                            <svg aria-hidden="true"
-                                class="w-6 h-6 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                            </svg>
-                            <span class="ml-3">Overview</span>
-                        </a>
-                    </li>
-                    <!-- Pages Dropdown -->
-                    <li>
-                        <button type="button"
-                            class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                            aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
-                            <svg aria-hidden="true"
-                                class="flex-shrink-0 w-6 h-6 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                                fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="flex-1 ml-3 text-left whitespace-nowrap">Pages</span>
-                            <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                        <ul id="dropdown-pages" class="hidden py-2 space-y-2">
-                            <li>
-                                <a href="#"
-                                    class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100 group">
-                                    Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100 group">
-                                    Kanban
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100 group">
-                                    Calendar
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Add more sidebar items as needed -->
-                </ul>
+                <?php echo generate_sidebar_menu(); ?>
             </div>
             <!-- Bottom Sidebar Items -->
             <ul class="space-y-2 pt-5 mt-5 border-t border-gray-200 dark:border-gray-700">

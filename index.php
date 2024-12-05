@@ -57,7 +57,7 @@ if ( $_URI[0] === 'admin' && is_user_logged_in() ) {
 header('content-type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-if ( $_URI[0] === 'api' ) {
+if ( $_URI[0] === 'api' && ((!is_bearer_active()) || (is_bearer_active() && is_bearer())) ) {
 	include_once ABSPATH . 'includes/api.php';
 	die();
 }

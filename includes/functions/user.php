@@ -979,6 +979,42 @@ function get_user_id_by_session_token($token) {
 }
 
 /**
+ * Bearer Token Genrator.
+ */
+function generate_bearer_token($key) {
+    $bearer_token = bin2hex(random_bytes(32));
+    update_option( $key . '_bearer_token', $bearer_token);
+    return $bearer_token;
+}
+
+function get_all_bearer_token() {
+    global $db;
+    $query = "SELECT option_name, option_value FROM " . $db->prefix() . "options WHERE option_name LIKE '%_bearer_token'";
+    $result = $db->execute_query($query);
+    $bearer_tokens = array();
+    while ($row = $result->fetch_assoc()) {
+        $bearer_tokens[preg_replace('/_bearer_token$/', '', $row['option_name'])] = $row['option_value'];
+    }
+    return $bearer_tokens;
+}
+
+function delete_bearer_token($key) {
+    return delete_option($key . '_bearer_token');
+}
+
+function is_bearer() {
+    if (isset($_SERVER['HTTP_AUTH_KEY']) && isset($_SERVER['HTTP_AUTHORIZATION']) && str_starts_with($_SERVER['HTTP_AUTHORIZATION'], 'Bearer ')) {
+        $key_bearer_value = get_option($_SERVER['HTTP_AUTH_KEY'] . '_bearer_token');
+        return $key_bearer_value === substr($_SERVER['HTTP_AUTHORIZATION'], 7);
+    }
+    return false;
+}
+
+function is_bearer_active() {
+    return get_option('bearer') === 'yes';
+}
+
+/**
  * Retrieve all roles.
  *
  * @return array An associative array of roles.
