@@ -290,7 +290,6 @@ function verifyData() {
  */
 function FixData(priority) {
   const validPriorities = ["cookie", "ls"];
-  const lowerPriority = priority.toLowerCase() === "cookie" ? "ls" : "cookie";
 
   return validPriorities.includes(priority.toLowerCase())
     ? (function () {
