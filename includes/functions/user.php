@@ -797,19 +797,26 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         $expiration = time() + 2 * DAY_IN_SECONDS; // 2 days
     }
 
+    $signon_sessions_json = get_user_meta($user_id, 'session_token', true);
+    $signon_sessions = $signon_sessions_json ? json_decode($signon_sessions_json, true) : array();
+
+    // Ensure signon_sessions is an array
+    if (!is_array($signon_sessions)) {
+        $signon_sessions = array();
+    }
+
+    // Limit to 10 sessions
+    if (count($signon_sessions) >= 10) {
+        array_shift($signon_sessions); // Remove the oldest session
+    }
+
     $session_created = array(
         'session_token' => $token,
         'expiration' => $expiration,
     );
 
-    if ( $signon_sessions = get_user_meta($user_id, 'session_token') ) {
-        while (count($signon_sessions) >= 10) {
-            array_shift($signon_sessions);
-        }
-        $signon_sessions[] = $session_created;
-    } else {
-        $signon_sessions = array($session_created);
-    }
+    // Append the new session
+    $signon_sessions[] = $session_created;
 
     // Update usermeta
     update_user_meta($user_id, 'session_token', serialize($signon_sessions));

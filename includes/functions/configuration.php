@@ -16,4 +16,6 @@ if (isset($_COOKIE['color-theme'])) {
     define('PREFERS_COLOR_SCHEME', $_COOKIE['color-theme'] === 'light' ? 'light' : 'dark');
 } elseif (isset($_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'])) {
     define('PREFERS_COLOR_SCHEME', $_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'] === 'light' ? 'light' : 'dark');
+} else {
+    define('PREFERS_COLOR_SCHEME', 'dark');
 }
