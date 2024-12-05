@@ -409,15 +409,14 @@ window.onload = function () {
   if (
     getData("color-theme") === "dark" ||
     (!("color-theme" in localStorage) &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
+      window.matchMedia("(prefers-color-scheme: dark)").matches) ||
+      htmlElement.classList.includes('dark')
   ) {
     document.documentElement.classList.add("dark");
     themeToggleDarkIcon.classList.remove("hidden");
-    setData("color-theme", "dark");
   } else {
     document.documentElement.classList.remove("dark");
     themeToggleLightIcon.classList.remove("hidden");
-    setData("color-theme", "light");
   }
 
   // Toggle theme on button click.
