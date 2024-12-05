@@ -352,9 +352,9 @@ function FixData(priority) {
 function getAllData() {
   const trackedKeys = JSON.parse(localStorage.getItem("trackedKeys")) || [];
   return trackedKeys.map((key) => {
-    const cookieValue = getCookie(key);
+    const value = getCookie(key);
     const localStorageValue = getLocalStorage(key);
-    return cookieValue === localStorageValue ? {key,cookieValue}:null;
+    return value === localStorageValue ? {key,value}:null;
   });
 }
 
