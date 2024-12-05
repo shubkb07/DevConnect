@@ -19,7 +19,7 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
 ?>
 
 <!DOCTYPE html>
-<html lang="en" class="<?php echo PREFERS_COLOR_SCHEME === 'dark' ?? 'dark'; ?>" meow="<?php echo PREFERS_COLOR_SCHEME; ?>">
+<html lang="en" class="<?php echo PREFERS_COLOR_SCHEME === 'dark' ? 'dark':''; ?>" meow="<?php echo PREFERS_COLOR_SCHEME; ?>">
 
 <head>
     <meta charset="UTF-8">
