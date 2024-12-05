@@ -29,7 +29,7 @@ add_sub_menu('settings', 'dashboard', 'Settings', '/admin/dashboard/settings', '
         <!-- Your main content goes here -->
         <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white"><? echo get_pagename(); ?></h1>
-            <?php echo get_content(); ?>
+            <?php get_content(); ?>
         </div>
     </main>
     <?php get_footer(); ?>
