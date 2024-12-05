@@ -806,7 +806,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         while (count($signon_sessions) >= 10) {
             array_shift($signon_sessions);
         }
-        array_push($signon_sessions, $session_created);
+        $signon_sessions[] = $session_created;
     } else {
         $signon_sessions = array($session_created);
     }
@@ -900,10 +900,12 @@ function logout() {
 
     $user_id = get_current_user_id();
 
+    $current_user_token = explode('-', $_COOKIE['auth_token'])[1];
+
+    get_user_meta($user_id, 'session_token');
+
     // Remove session data
     delete_user_meta($user_id, 'session_token');
-    delete_user_meta($user_id, 'session_expiration');
-    delete_user_meta($user_id, 'remember_me');
 
     // Remove auth cookie
     remove_auth_cookie();
