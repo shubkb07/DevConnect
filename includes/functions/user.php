@@ -585,9 +585,6 @@ function add_role($role_name, $display_name = '', $capabilities = []) {
     // Get existing roles
     $roles = get_option('roles');
 
-    echo $roles;
-    die();
-
     if (isset($roles[$role_name])) {
         throw new Exception('Role already exists.');
     }
@@ -798,11 +795,6 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
     $signon_sessions_json = get_user_meta($user_id, 'session_token', true);
     $signon_sessions = $signon_sessions_json ? $signon_sessions_json : array();
 
-    // Ensure signon_sessions is an array
-    if (!is_array($signon_sessions)) {
-        $signon_sessions = array();
-    }
-
     // Limit to 10 sessions
     if (count($signon_sessions) >= 10) {
         array_shift($signon_sessions); // Remove the oldest session
@@ -812,6 +804,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
         'session_token' => $token,
         'expiration' => $expiration,
         'ua' => $_SERVER['HTTP_USER_AGENT'],
+        'nonce' => array(),
     );
 
     // Append the new session
@@ -840,18 +833,15 @@ function remove_auth_cookie() {
 function validate_auth_cookie($token) {
     $user = get_user_by('user_login', explode('-', $token)[0]);
 
-    if($user_sessions = get_user_meta($user['ID'],'session_token')) {
-
+    if($user_sessions = get_user_meta($user['ID'],'session_token', true)) {
         // Current time
         $current_time = time();
 
         // Iterate over the nested arrays.
-        foreach ($user_sessions as $outer_array) {
-            foreach ($outer_array as $session) {
-                // Check if 'expiration' key exists and if the session is still valid
-                if (isset($session['expiration']) && $session['expiration'] >= $current_time) {
-                    $active_sessions[] = $session;
-                }
+        foreach ($user_sessions as $session) {
+            // Check if 'expiration' key exists and if the session is still valid
+            if (isset($session['expiration']) && $session['expiration'] >= $current_time) {
+                $active_sessions[] = $session;
             }
         }
 
@@ -888,7 +878,7 @@ function logout() {
 
     $user_id = get_current_user_id();
 
-    $sessions = get_user_meta($user_id, 'session_token');
+    $sessions = get_user_meta($user_id, 'session_token', true);
 
     $current_token = $_COOKIE['auth_token'];
 

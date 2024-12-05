@@ -45,6 +45,7 @@ if ( 1 === count($_URI) && $_URI[0] === 'login' ) {
 	exit();
 } elseif ( 1 === count($_URI) && $_URI[0] === 'logout' ) {
 	logout();
+	header('location: /login');
 }
 
 if ( $_URI[0] === 'admin' && is_user_logged_in() ) {
