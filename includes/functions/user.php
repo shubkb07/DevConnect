@@ -798,7 +798,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
     }
 
     $signon_sessions_json = get_user_meta($user_id, 'session_token', true);
-    $signon_sessions = $signon_sessions_json ? json_decode($signon_sessions_json, true) : array();
+    $signon_sessions = $signon_sessions_json ? $signon_sessions_json : array();
 
     // Ensure signon_sessions is an array
     if (!is_array($signon_sessions)) {
