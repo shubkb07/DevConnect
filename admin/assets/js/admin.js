@@ -288,7 +288,7 @@ function verifyData() {
  * @param {string} priority - The priority storage medium ('cookie' or 'ls').
  * @returns {Object} - An object containing the fix status and details of changes made.
  */
-function FixData(priority) {
+function FixData(priority='cookie') {
   const validPriorities = ["cookie", "ls"];
 
   return validPriorities.includes(priority.toLowerCase())
