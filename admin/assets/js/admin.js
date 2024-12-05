@@ -354,13 +354,8 @@ function getAllData() {
   return trackedKeys.map((key) => {
     const cookieValue = getCookie(key);
     const localStorageValue = getLocalStorage(key);
-    const isConsistent = cookieValue === localStorageValue;
-    return {
-      key,
-      cookieValue,
-      localStorageValue,
-      isConsistent,
-    };
+    const isConsistent = ;
+    return cookieValue === localStorageValue ? {key,cookieValue}:null;
   });
 }
 
