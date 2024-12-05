@@ -410,7 +410,7 @@ window.onload = function () {
     getData("color-theme") === "dark" ||
     (!("color-theme" in localStorage) &&
       window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-      htmlElement.classList.includes('dark')
+      htmlElement.classList.contains('dark')
   ) {
     document.documentElement.classList.add("dark");
     themeToggleDarkIcon.classList.remove("hidden");
