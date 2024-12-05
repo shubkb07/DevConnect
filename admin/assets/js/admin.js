@@ -172,7 +172,7 @@ function setData(name, value, options = {}) {
   if (!name) {
     throw new Error("Key name is required.");
   }
-
+console.log('reach sd');
   // Set Cookie
   const cookieSet = setCookie(name, value, options);
 
@@ -288,7 +288,7 @@ function verifyData() {
  * @param {string} priority - The priority storage medium ('cookie' or 'ls').
  * @returns {Object} - An object containing the fix status and details of changes made.
  */
-function FixData(priority = "cookie") {
+function fixData(priority = "cookie") {
   const validPriorities = ["cookie", "ls"];
 
   return validPriorities.includes(priority.toLowerCase())
@@ -395,6 +395,8 @@ function getAllLocalStorageItems() {
 }
 
 window.onload = function () {
+
+    fixData();
   // Theme Toggle Script
   const themeToggleBtn = document.getElementById("theme-toggle");
   const themeToggleLightIcon = document.getElementById(
@@ -421,10 +423,11 @@ window.onload = function () {
     htmlElement.classList.toggle("dark");
     themeToggleLightIcon.classList.toggle("hidden");
     themeToggleDarkIcon.classList.toggle("hidden");
-    setdata(
+    console.log('toggle theme');
+    console.log(setData(
       "color-theme",
       htmlElement.classList.contains("dark") ? "dark" : "light"
-    );
+    ));
   });
 
   const searchButton = document.getElementById("search-button");
