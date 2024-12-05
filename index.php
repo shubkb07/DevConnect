@@ -66,6 +66,7 @@ if ( $_URI[0] === '' ) {
 			'message' => 'Welcome to DevConnect API',
 			'user' => $user,
 			'server' => $_SERVER,
+			'ip' => $ip,
 		)
 	);
 } else {
@@ -75,6 +76,7 @@ if ( $_URI[0] === '' ) {
 			'message' => 'Not Found',
 			'user' => $user,
 			'server' => $_SERVER,
+			'ip' => $ip,
 		)
 	);
 }
