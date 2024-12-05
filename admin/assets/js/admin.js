@@ -407,15 +407,17 @@ window.onload = function () {
 
   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
   if (
-    localStorage.getItem("color-theme") === "dark" ||
+    getData("color-theme") === "dark" ||
     (!("color-theme" in localStorage) &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
   ) {
     document.documentElement.classList.add("dark");
     themeToggleDarkIcon.classList.remove("hidden");
+    setData("color-theme", "dark");
   } else {
     document.documentElement.classList.remove("dark");
     themeToggleLightIcon.classList.remove("hidden");
+    setData("color-theme", "light");
   }
 
   // Toggle theme on button click.
@@ -423,11 +425,10 @@ window.onload = function () {
     htmlElement.classList.toggle("dark");
     themeToggleLightIcon.classList.toggle("hidden");
     themeToggleDarkIcon.classList.toggle("hidden");
-    console.log('toggle theme');
-    console.log(setData(
+    setData(
       "color-theme",
       htmlElement.classList.contains("dark") ? "dark" : "light"
-    ));
+    );
   });
 
   const searchButton = document.getElementById("search-button");
