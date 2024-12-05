@@ -23,8 +23,6 @@ global $user;
 // Initialize the global $user variable
 if (is_user_logged_in()) {
     $user_id = get_user_id_by_session_token($_COOKIE['auth_token']);
-    // echo $user_id;
-    // die();
     if ($user_id) {
         $user = get_userdata($user_id);
     } else {
@@ -813,6 +811,7 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
     $session_created = array(
         'session_token' => $token,
         'expiration' => $expiration,
+        'ua' => $_SERVER['HTTP_USER_AGENT'],
     );
 
     // Append the new session
@@ -823,24 +822,6 @@ function set_auth_cookie($user_id, $remember = false, $secure = false) {
 
     // Set the auth cookie
     setcookie('auth_token', $token, $expiration, '/', '', $secure, true);
-}
-
-/**
- * Update authentication cookies.
- *
- * @param int $user_id The ID of the user.
- * @throws Exception If no session token is found.
- */
-function update_auth_cookie($user_id) {
-    $token = get_user_meta($user_id, 'session_token', true);
-    if (!$token) {
-        throw new Exception('No session token found.');
-    }
-
-    // Determine if 'remember me' is set
-    $remember = get_user_meta($user_id, 'remember_me', true) === '1';
-
-    set_auth_cookie($user_id, $remember, isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on', $token);
 }
 
 /**
@@ -864,7 +845,7 @@ function validate_auth_cookie($token) {
         // Current time
         $current_time = time();
 
-        // Iterate over the nested arrays
+        // Iterate over the nested arrays.
         foreach ($user_sessions as $outer_array) {
             foreach ($outer_array as $session) {
                 // Check if 'expiration' key exists and if the session is still valid
@@ -876,7 +857,7 @@ function validate_auth_cookie($token) {
 
 
         foreach ($active_sessions as $session) {
-            if ($session['session_token'] === $token) {
+            if ($session['session_token'] === $token && $session['ua'] === $_SERVER['HTTP_USER_AGENT']) {
                 return true;
             }
         }
@@ -907,12 +888,17 @@ function logout() {
 
     $user_id = get_current_user_id();
 
-    $current_user_token = explode('-', $_COOKIE['auth_token'])[1];
+    $sessions = get_user_meta($user_id, 'session_token');
 
-    get_user_meta($user_id, 'session_token');
+    $current_token = $_COOKIE['auth_token'];
+
+    // Remove the session with the matching token
+    $sessions = array_filter($sessions, function($session) use ($current_token) {
+        return $session['session_token'] !== $current_token;
+    });
 
     // Remove session data
-    delete_user_meta($user_id, 'session_token');
+    update_user_meta($user_id, 'session_token', $sessions);
 
     // Remove auth cookie
     remove_auth_cookie();
@@ -992,7 +978,8 @@ function get_user_id_by_session_token($token) {
         }
 
         foreach ($active_sessions as $session) {
-            if ($session['session_token'] === $token) {
+            if ($session['session_token'] === $token && $session['ua'] === $_SERVER['HTTP_USER_AGENT']) {
+                $user['session_token'] = '';
                 return $user['ID'];
             }
         }

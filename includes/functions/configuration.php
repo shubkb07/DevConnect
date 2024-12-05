@@ -12,10 +12,9 @@ define('SECOND_IN_NANOSECONDS', SECOND_IN_MICROSECONDS * 1000);
 define('IP', $_SERVER[''] ?? $_SERVER['HTTP_X_REAL_IP'] ?? (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]) : $_SERVER['REMOTE_ADDR']));
 $ip = IP;
 
-if (isset($_COOKIE['color-theme'])) {
-    define('PREFERS_COLOR_SCHEME', $_COOKIE['color-theme'] === 'light' ? 'light' : 'dark');
-} elseif (isset($_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'])) {
-    define('PREFERS_COLOR_SCHEME', $_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'] === 'light' ? 'light' : 'dark');
-} else {
-    define('PREFERS_COLOR_SCHEME', 'dark');
-}
+define(
+    'PREFERS_COLOR_SCHEME',
+    (($_COOKIE['color-theme'] ?? $_SERVER['HTTP_SEC_CH_PREFERS_COLOR_SCHEME'] ?? 'dark') === 'light') 
+        ? 'light' 
+        : 'dark'
+);
