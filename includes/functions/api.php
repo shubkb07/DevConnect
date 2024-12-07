@@ -90,7 +90,7 @@ if (isset($_URI) && is_array($_URI)) {
 				}
 
 				// Call the registered callback with the parameters.
-				call_user_func($route['callback'], $parameters);
+				echo json_encode(call_user_func($route['callback'], $parameters));
 				die();
 			}
 		}

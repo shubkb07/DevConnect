@@ -58,7 +58,7 @@ header('content-type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 if ( $_URI[0] === 'api' && ((!is_bearer_active()) || (is_bearer_active() && is_bearer())) ) {
-	include_once ABSPATH . 'includes/api.php';
+	include_once ABSPATH . 'includes/functions/api.php';
 	die();
 }
 

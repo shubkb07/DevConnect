@@ -148,7 +148,6 @@ function insert_post( $postarr ) {
 	$post_excerpt = isset( $postarr['post_excerpt'] ) ? $postarr['post_excerpt'] : '';
 	$post_status  = isset( $postarr['post_status'] ) ? $postarr['post_status'] : 'publish';
 	$comment_status = isset( $postarr['comment_status'] ) ? $postarr['comment_status'] : 'open';
-	$post_type    = isset( $postarr['post_type'] ) ? $postarr['post_type'] : 'post';
 
 	// Generate unique slug.
 	$slug = sanitize_title( $post_title );
@@ -156,10 +155,9 @@ function insert_post( $postarr ) {
 
 	$datetime      = gmdate( 'Y-m-d H:i:s' );
 	$post_author   = isset( $postarr['post_author'] ) ? $postarr['post_author'] : 0;
-	$post_reputation = 0;
 
-	$query = "INSERT INTO {$prefix}posts (post_author, post_date_gmt, post_content, post_title, post_excerpt, post_status, post_reputation, comment_status, post_name, post_modified_gmt, slug, comment_count, post_type)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$query = "INSERT INTO {$prefix}posts (post_author, post_date_gmt, post_content, post_title, post_excerpt, post_status, post_positive, post_negative, comment_status, post_name, post_modified_gmt, slug, comment_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	$params = array(
 		$post_author,
@@ -168,23 +166,20 @@ function insert_post( $postarr ) {
 		$post_title,
 		$post_excerpt,
 		$post_status,
-		$post_reputation,
+		0,
+		0,
 		$comment_status,
 		$slug,
 		$datetime,
 		$slug,
 		0,
-		$post_type,
 	);
 	$types  = 'isssssssssssi';
 
 	$result = $db->execute_query( $query, $params, $types );
+    $post_id = $db->get_connection()->insert_id;
 
-	if ( $result ) {
-		return $db->get_connection()->insert_id;
-	}
-
-	return false;
+    return $post_id ? $post_id : false;
 }
 
 /**
@@ -241,11 +236,6 @@ function update_post( $postarr ) {
 	if ( isset( $postarr['comment_status'] ) ) {
 		$fields[] = "comment_status = ?";
 		$params[] = $postarr['comment_status'];
-		$types   .= 's';
-	}
-	if ( isset( $postarr['post_type'] ) ) {
-		$fields[] = "post_type = ?";
-		$params[] = $postarr['post_type'];
 		$types   .= 's';
 	}
 

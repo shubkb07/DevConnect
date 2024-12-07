@@ -1688,7 +1688,7 @@ function network_relationship_diagram($id, $data, $options = [], $attributes = [
 
 
 
-    Database Tables:
+Database Tables:
 $table_queries = [
         "{$table_prefix}users" => "CREATE TABLE IF NOT EXISTS {$table_prefix}users (
             ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,

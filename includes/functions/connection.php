@@ -29,7 +29,7 @@ class DBConnection {
         return $this->prefix;
     }
 
-    public function execute_query($query, $params = [], $types = '') {
+    public function execute_query($query, $params = [], $types = '', $m='') {
         $stmt = $this->connection->prepare($query);
 
         if ($stmt === false) {

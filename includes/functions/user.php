@@ -183,19 +183,20 @@ function insert_user($user_data) {
     $user_registered = isset($user_data['user_registered']) ? $user_data['user_registered'] : date('Y-m-d H:i:s');
     $user_status = isset($user_data['user_status']) ? $user_data['user_status'] : 0;
 
-    $query = "INSERT INTO {$db->prefix()}users (user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_status, display_name)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO {$db->prefix()}users (user_login, user_pass, user_nicename, user_email, user_url, user_reputaion, user_registered, user_status, display_name)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $params = [
         $user_data['user_login'],
         $hashed_password,
         $user_nicename,
         $user_data['user_email'],
         $user_url,
+        0,
         $user_registered,
         $user_status,
         $display_name
     ];
-    $types = 'ssssssis';
+    $types = 'sssssisis';
 
     $db->execute_query($query, $params, $types);
 
