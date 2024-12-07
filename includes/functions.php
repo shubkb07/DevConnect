@@ -19,7 +19,8 @@ $funtions_files_names = array(
 	'sanitization',
 	'i18n',
 	'options',
-	'user'
+	'user',
+	'posts',
 );
 
 foreach ($funtions_files_names as $file_name) {

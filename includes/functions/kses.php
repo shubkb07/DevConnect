@@ -1082,3 +1082,16 @@ function is_serialized( $data, $strict = true ) {
 	}
 	return false;
 }
+
+/**
+ * Simulates site_url function.
+ *
+ * @param string $path Path.
+ *
+ * @return string Site URL with path.
+ */
+function site_url( $path = '' ) {
+    // You would replace this with your actual site URL.
+    $site_url = get_option('site_url');
+    return $site_url . $path;
+}

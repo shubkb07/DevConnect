@@ -172,19 +172,34 @@ function setData(name, value, options = {}) {
   if (!name) {
     throw new Error("Key name is required.");
   }
-console.log('reach sd');
+
   // Set Cookie
   const cookieSet = setCookie(name, value, options);
 
   // Set LocalStorage
   const localStorageSet = setLocalStorage(name, value);
 
-  // Track the key in LocalStorage using ternary operator
-  let trackedKeys = JSON.parse(localStorage.getItem("trackedKeys")) || [];
-  trackedKeys.includes(name)
-    ? null
-    : (trackedKeys.push(name),
-      localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys)));
+  // Track the key in LocalStorage
+  let trackedKeysRaw = localStorage.getItem("trackedKeys");
+  let trackedKeys;
+
+  try {
+    trackedKeys = JSON.parse(trackedKeysRaw);
+    if (!Array.isArray(trackedKeys)) {
+      trackedKeys = [];
+    }
+  } catch (error) {
+    trackedKeys = [];
+  }
+
+  if (!trackedKeys.includes(name)) {
+    trackedKeys.push(name);
+    try {
+      localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys));
+    } catch (error) {
+      return false;
+    }
+  }
 
   return (
     cookieSet &&
@@ -207,9 +222,20 @@ function getData(name) {
 
   const cookieValue = getCookie(name);
   const localStorageValue = getLocalStorage(name);
+  const trackedKeysRaw = localStorage.getItem("trackedKeys");
 
-  return cookieValue === localStorageValue &&
-    localStorage.getItem("trackedKeys").includes(name)
+  let trackedKeys;
+
+  try {
+    trackedKeys = JSON.parse(trackedKeysRaw);
+    if (!Array.isArray(trackedKeys)) {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
+
+  return cookieValue === localStorageValue && trackedKeys.includes(name)
     ? cookieValue
     : null;
 }
@@ -235,13 +261,28 @@ function deleteData(name, options = {}) {
   // Delete LocalStorage
   const localStorageDeleted = deleteLocalStorage(name);
 
-  // Remove the key from trackedKeys using ternary operator
-  let trackedKeys = JSON.parse(localStorage.getItem("trackedKeys")) || [];
+  // Remove the key from trackedKeys
+  let trackedKeysRaw = localStorage.getItem("trackedKeys");
+  let trackedKeys;
+
+  try {
+    trackedKeys = JSON.parse(trackedKeysRaw);
+    if (!Array.isArray(trackedKeys)) {
+      trackedKeys = [];
+    }
+  } catch (error) {
+    trackedKeys = [];
+  }
+
   const index = trackedKeys.indexOf(name);
-  index !== -1
-    ? (trackedKeys.splice(index, 1),
-      localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys)))
-    : null;
+  if (index !== -1) {
+    trackedKeys.splice(index, 1);
+    try {
+      localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys));
+    } catch (error) {
+      return false;
+    }
+  }
 
   return (
     cookieDeleted &&
@@ -256,19 +297,37 @@ function deleteData(name, options = {}) {
  * @returns {Object} - An object containing the verification status and any discrepancies.
  */
 function verifyData() {
-  const trackedKeys = JSON.parse(localStorage.getItem("trackedKeys")) || [];
+  let trackedKeysRaw = localStorage.getItem("trackedKeys");
+  let trackedKeys;
+
+  try {
+    trackedKeys = JSON.parse(trackedKeysRaw);
+    if (!Array.isArray(trackedKeys)) {
+      return {
+        status: "No Data",
+        message: "'trackedKeys' is not an array or is empty.",
+      };
+    }
+  } catch (error) {
+    return {
+      status: "Error",
+      message: "Failed to parse 'trackedKeys' in LocalStorage.",
+    };
+  }
+
   let discrepancies = [];
 
   for (let key of trackedKeys) {
     const cookieValue = getCookie(key);
     const localStorageValue = getLocalStorage(key);
 
-    cookieValue !== localStorageValue &&
+    if (cookieValue !== localStorageValue) {
       discrepancies.push({
         key: key,
         cookieValue: cookieValue,
         localStorageValue: localStorageValue,
       });
+    }
   }
 
   return discrepancies.length === 0
@@ -291,69 +350,116 @@ function verifyData() {
 function fixData(priority = "cookie") {
   const validPriorities = ["cookie", "ls"];
 
-  return validPriorities.includes(priority.toLowerCase())
-    ? (function () {
-        const trackedKeys =
-          JSON.parse(localStorage.getItem("trackedKeys")) || [];
-        let changes = [];
+  if (!validPriorities.includes(priority.toLowerCase())) {
+    throw new Error("Invalid priority value. Must be 'cookie' or 'ls'.");
+  }
 
-        trackedKeys.forEach((key) => {
-          const cookieValue = getCookie(key);
-          const localStorageValue = getLocalStorage(key);
+  let trackedKeysRaw = localStorage.getItem("trackedKeys");
+  let trackedKeys;
 
-          if (cookieValue !== localStorageValue) {
-            if (priority.toLowerCase() === "cookie") {
-              cookieValue !== null
-                ? (setLocalStorage(key, cookieValue),
-                  changes.push({
-                    key,
-                    updated: "localStorage",
-                    value: cookieValue,
-                  }))
-                : (deleteLocalStorage(key),
-                  changes.push({ key, updated: "localStorage", value: null }));
-            } else {
-              // priority === "ls"
-              localStorageValue !== null
-                ? (setCookie(key, localStorageValue, { path: "/" }),
-                  changes.push({
-                    key,
-                    updated: "cookie",
-                    value: localStorageValue,
-                  }))
-                : (deleteCookie(key, { path: "/" }),
-                  changes.push({ key, updated: "cookie", value: null }));
-            }
+  try {
+    trackedKeys = JSON.parse(trackedKeysRaw);
+    if (!Array.isArray(trackedKeys)) {
+      trackedKeys = [];
+    }
+  } catch (error) {
+    trackedKeys = [];
+  }
+
+  let changes = [];
+
+  trackedKeys.forEach((key) => {
+    const cookieValue = getCookie(key);
+    const localStorageValue = getLocalStorage(key);
+
+    if (cookieValue !== localStorageValue) {
+      if (priority.toLowerCase() === "cookie") {
+        if (cookieValue !== null) {
+          const setLS = setLocalStorage(key, cookieValue);
+          if (setLS) {
+            changes.push({
+              key: key,
+              updated: "localStorage",
+              value: cookieValue,
+            });
           }
-        });
+        } else {
+          const delLS = deleteLocalStorage(key);
+          if (delLS) {
+            changes.push({
+              key: key,
+              updated: "localStorage",
+              value: null,
+            });
+          }
+        }
+      } else if (priority.toLowerCase() === "ls") {
+        if (localStorageValue !== null) {
+          const setC = setCookie(key, localStorageValue, { path: "/" });
+          changes.push({
+            key: key,
+            updated: "cookie",
+            value: localStorageValue,
+          });
+        } else {
+          const delC = deleteCookie(key, { path: "/" });
+          changes.push({
+            key: key,
+            updated: "cookie",
+            value: null,
+          });
+        }
+      }
+    }
+  });
 
-        return {
-          priority: priority.toLowerCase(),
-          changes: changes,
-          message:
-            changes.length === 0
-              ? "No discrepancies found. All data is consistent."
-              : `Fixed ${changes.length} discrepancies based on priority '${priority}'.`,
-        };
-      })()
-    : (() => {
-        throw new Error("Invalid priority value. Must be 'cookie' or 'ls'.");
-      })();
+  return {
+    priority: priority.toLowerCase(),
+    changes: changes,
+    message:
+      changes.length === 0
+        ? "No discrepancies found. All data is consistent."
+        : `Fixed ${changes.length} discrepancies based on priority '${priority}'.`,
+  };
 }
-
-// New Function: getAllData
 
 /**
  * Retrieves all tracked keys and their values from both Cookies and LocalStorage.
+ * Ensures 'trackedKeys' exists and is a valid JSON array; otherwise, initializes it as an empty array.
  *
  * @returns {Array} - An array of objects containing key, cookieValue, localStorageValue, and consistency status.
  */
 function getAllData() {
-  const trackedKeys = JSON.parse(localStorage.getItem("trackedKeys")) || [];
+  let trackedKeysRaw = localStorage.getItem("trackedKeys");
+  let trackedKeys = [];
+
+  if (trackedKeysRaw) {
+    try {
+      const parsedKeys = JSON.parse(trackedKeysRaw);
+      if (Array.isArray(parsedKeys)) {
+        trackedKeys = parsedKeys;
+      } else {
+        trackedKeys = [];
+        localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys));
+      }
+    } catch (error) {
+      trackedKeys = [];
+      localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys));
+    }
+  } else {
+    localStorage.setItem("trackedKeys", JSON.stringify(trackedKeys));
+  }
+
+  // Retrieve all data based on the validated trackedKeys
   return trackedKeys.map((key) => {
-    const value = getCookie(key);
+    const cookieValue = getCookie(key);
     const localStorageValue = getLocalStorage(key);
-    return value === localStorageValue ? { key, value } : null;
+    return {
+      key: key,
+      cookieValue: cookieValue,
+      localStorageValue: localStorageValue,
+      isConsistent: cookieValue === localStorageValue,
+    };
   });
 }
 
@@ -395,8 +501,7 @@ function getAllLocalStorageItems() {
 }
 
 window.onload = function () {
-
-    fixData();
+  fixData();
   // Theme Toggle Script
   const themeToggleBtn = document.getElementById("theme-toggle");
   const themeToggleLightIcon = document.getElementById(
@@ -410,7 +515,7 @@ window.onload = function () {
     getData("color-theme") === "dark" ||
     (!("color-theme" in localStorage) &&
       window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-      htmlElement.classList.contains('dark')
+    htmlElement.classList.contains("dark")
   ) {
     document.documentElement.classList.add("dark");
     themeToggleDarkIcon.classList.remove("hidden");

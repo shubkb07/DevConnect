@@ -163,7 +163,7 @@ function get_navbar()
                 <!-- Add more bottom items as needed -->
                 <!-- Log Out Button -->
                 <li>
-                    <a href="#"
+                    <a href="/logout"
                         class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
                         <!-- Logout Icon -->
                         <svg class="w-6 h-6 text-gray-400 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg"
@@ -364,40 +364,44 @@ function get_footer()
 
 function get_pagename()
 {
-    return 'Admin Dashboard';
+    global $_URI,$menu;
+    if (count($_URI)==2 && array_key_exists($_URI[1],$menu)) {
+        return $menu[$_URI[1]]['name'];
+    } elseif (count($_URI)==3 && array_key_exists($_URI[1],$menu) && array_key_exists($_URI[2],$menu[$_URI[1]]['submenu'])) {
+        return $menu[$_URI[1]]['submenu'][$_URI[2]]['name'];
+    } else {
+        return 'Dashboard';
+    }
 }
 
-function get_content()
-{
-?>
-    <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mt-6 mb-6">
-        <!-- Content -->
-        <p class="text-gray-900 dark:text-white">Content</p>
-    </div>
-    <div class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mt-6 mb-6">
-        <!-- Content -->
-        <p class="text-gray-900 dark:text-white mt-6 mb-6">Content</p>
-    </div>
-    <div
-        class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
-        <!-- Content -->
-        <p class="text-gray-900 dark:text-white">Centered Content</p>
-    </div>
-    <div
-        class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
-        <!-- Content -->
-        <p class="text-gray-900 dark:text-white">Centered Content</p>
-    </div>
-    <div
-        class="w-auto mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
-        <!-- Content -->
-        <p class="text-gray-900 dark:text-white">Centered Content</p>
-    </div>
-    <div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div class="w-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
-            <!-- Content -->
-            <p class="text-gray-900 dark:text-white">Centered Content</p>
-        </div>
-    </div>
-<?php
+if (isset($_POST['action']) && !empty($_POST['action']) && function_exists($_POST['action'] . '_submit')) {
+    call_user_func($_POST['action'] . '_submit');
+}
+
+function set_content($function) {
+    if (function_exists($function . '_submit')) {
+        ?>
+        <form action="" method="post">
+            <input type="hidden" name="action" value="<?php echo $function; ?>">
+            <?php call_user_func($function); ?>
+            <br>
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>
+        </form>
+        <?php
+    } else {
+        call_user_func($function);
+    }
+}
+
+function get_content() {
+    global $_URI,$menu;
+    if (count($_URI)==1 && array_key_exists($_URI[0],$menu)) {
+        call_user_func('set_content', $menu[$_URI[0]]['options']['callback']);
+    } elseif (count($_URI)==2 && array_key_exists($_URI[1],$menu)) {
+        call_user_func('set_content', $menu[$_URI[1]]['options']['callback']);
+    } elseif (count($_URI)==3 && array_key_exists($_URI[1],$menu) && array_key_exists($_URI[2],$menu[$_URI[1]]['submenu'])) {
+        return $menu[$_URI[1]]['submenu'][$_URI[2]]['name'];
+    } else {
+        return '';
+    }
 }

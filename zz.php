@@ -1648,3 +1648,278 @@ function network_relationship_diagram($id, $data, $options = [], $attributes = [
 }
 
 ?>
+    <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mt-6 mb-6">
+        <!-- Content -->
+        <p class="text-gray-900 dark:text-white">Content</p>
+    </div>
+    <div class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 mt-6 mb-6">
+        <!-- Content -->
+        <p class="text-gray-900 dark:text-white mt-6 mb-6">Content</p>
+    </div>
+    <div
+        class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
+        <!-- Content -->
+        <p class="text-gray-900 dark:text-white">Centered Content</p>
+    </div>
+    <div
+        class="max-w-fit mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
+        <!-- Content -->
+        <p class="text-gray-900 dark:text-white">Centered Content</p>
+    </div>
+    <div
+        class="w-auto mx-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex justify-center items-center mt-6 mb-6">
+        <!-- Content -->
+        <p class="text-gray-900 dark:text-white">Centered Content</p>
+    </div>
+    <div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div class="w-auto bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+            <!-- Content -->
+            <p class="text-gray-900 dark:text-white">Centered Content</p>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    Database Tables:
+$table_queries = [
+        "{$table_prefix}users" => "CREATE TABLE IF NOT EXISTS {$table_prefix}users (
+            ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            user_login varchar(60) NOT NULL DEFAULT '',
+            user_pass varchar(255) NOT NULL DEFAULT '',
+            user_nicename varchar(50) NOT NULL DEFAULT '',
+            user_email varchar(100) NOT NULL DEFAULT '',
+            user_url varchar(100) NOT NULL DEFAULT '',
+            user_registered datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+            user_activation_key varchar(255) NOT NULL DEFAULT '',
+            user_status int(11) NOT NULL DEFAULT '0',
+            display_name varchar(250) NOT NULL DEFAULT '',
+            PRIMARY KEY (ID),
+            UNIQUE KEY user_login_key (user_login),
+            UNIQUE KEY user_nicename (user_nicename),
+            UNIQUE KEY user_email (user_email)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}terms" => "CREATE TABLE IF NOT EXISTS {$table_prefix}terms (
+            term_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            name varchar(200) NOT NULL DEFAULT '',
+            slug varchar(200) NOT NULL DEFAULT '',
+            PRIMARY KEY (term_id),
+            UNIQUE KEY slug (slug)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}term_taxonomy" => "CREATE TABLE IF NOT EXISTS {$table_prefix}term_taxonomy (
+            term_taxonomy_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            term_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            taxonomy varchar(32) NOT NULL DEFAULT '',
+            description longtext NOT NULL,
+            count bigint(20) NOT NULL DEFAULT 0,
+            PRIMARY KEY (term_taxonomy_id),
+            UNIQUE KEY term_id_taxonomy (term_id, taxonomy),
+            FOREIGN KEY (term_id) REFERENCES {$table_prefix}terms(term_id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}termmeta" => "CREATE TABLE IF NOT EXISTS {$table_prefix}termmeta (
+            meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            term_id bigint(20) unsigned NOT NULL DEFAULT '0',
+            meta_key varchar(255) DEFAULT NULL,
+            meta_value longtext,
+            PRIMARY KEY (meta_id),
+            KEY term_id (term_id),
+            FOREIGN KEY (term_id) REFERENCES {$table_prefix}terms(term_id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}options" => "CREATE TABLE IF NOT EXISTS {$table_prefix}options (
+            option_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            option_name varchar(191) NOT NULL DEFAULT '',
+            option_value longtext NOT NULL,
+            autoload varchar(20) NOT NULL DEFAULT 'yes',
+            PRIMARY KEY (option_id),
+            UNIQUE KEY option_name (option_name)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}posts" => "CREATE TABLE IF NOT EXISTS {$table_prefix}posts (
+            ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            post_author bigint(20) unsigned NOT NULL DEFAULT '0',
+            post_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+            post_content longtext NOT NULL,
+            post_title text NOT NULL,
+            post_excerpt text NOT NULL,
+            post_status varchar(20) NOT NULL DEFAULT 'publish',
+            post_reputation int(11) NOT NULL DEFAULT '0',
+            comment_status varchar(20) NOT NULL DEFAULT 'open',
+            post_name varchar(200) NOT NULL DEFAULT '',
+            post_modified_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+            slug varchar(255) NOT NULL DEFAULT '',
+            comment_count bigint(20) NOT NULL DEFAULT '0',
+            PRIMARY KEY (ID),
+            FOREIGN KEY (post_author) REFERENCES {$table_prefix}users(ID) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}postmeta" => "CREATE TABLE IF NOT EXISTS {$table_prefix}postmeta (
+            meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            post_id bigint(20) unsigned NOT NULL DEFAULT '0',
+            meta_key varchar(255) DEFAULT NULL,
+            meta_value longtext,
+            PRIMARY KEY (meta_id),
+            KEY post_id (post_id),
+            FOREIGN KEY (post_id) REFERENCES {$table_prefix}posts(ID) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}comments" => "CREATE TABLE IF NOT EXISTS {$table_prefix}comments (
+            comment_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            comment_post_ID bigint(20) unsigned NOT NULL DEFAULT '0',
+            comment_author tinytext NOT NULL,
+            comment_reputation int(11) NOT NULL DEFAULT '0',
+            comment_author_email varchar(100) NOT NULL DEFAULT '',
+            comment_author_url varchar(200) NOT NULL DEFAULT '',
+            comment_author_IP varchar(100) NOT NULL DEFAULT '',
+            comment_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+            comment_date_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+            comment_content text NOT NULL,
+            comment_agent varchar(255) NOT NULL DEFAULT '',
+            comment_type varchar(20) NOT NULL DEFAULT 'comment',
+            comment_parent bigint(20) unsigned NOT NULL DEFAULT '0',
+            user_id bigint(20) unsigned NOT NULL DEFAULT '0',
+            PRIMARY KEY (comment_ID),
+            FOREIGN KEY (comment_post_ID) REFERENCES {$table_prefix}posts(ID) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES {$table_prefix}users(ID) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}commentmeta" => "CREATE TABLE IF NOT EXISTS {$table_prefix}commentmeta (
+            meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            comment_id bigint(20) unsigned NOT NULL DEFAULT '0',
+            meta_key varchar(255) DEFAULT NULL,
+            meta_value longtext,
+            PRIMARY KEY (meta_id),
+            KEY comment_id (comment_id),
+            FOREIGN KEY (comment_id) REFERENCES {$table_prefix}comments(comment_ID) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "{$table_prefix}usermeta" => "CREATE TABLE IF NOT EXISTS {$table_prefix}usermeta (
+            umeta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) unsigned NOT NULL DEFAULT '0',
+            meta_key varchar(255) DEFAULT NULL,
+            meta_value longtext,
+            PRIMARY KEY (umeta_id),
+            KEY user_id (user_id),
+            FOREIGN KEY (user_id) REFERENCES {$table_prefix}users(ID) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    ];
+DB connection is done by
+
+<?php
+
+if (!defined('ABSPATH')) {
+    die('Direct access not allowed.');
+}
+
+class DBConnection {
+    private $connection;
+    private $prefix;
+
+    public function __construct() {
+
+        // Establish the connection.
+        $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        if ($this->connection->connect_error) {
+            throw new Exception('Database connection failed: ' . $this->connection->connect_error);
+        }
+
+        // Set the table prefix.
+        $this->prefix = defined('DB_PREFIX') ? DB_PREFIX : '';
+    }
+
+    public function get_connection() {
+        return $this->connection;
+    }
+
+    public function prefix() {
+        return $this->prefix;
+    }
+
+    public function execute_query($query, $params = [], $types = '') {
+        $stmt = $this->connection->prepare($query);
+
+        if ($stmt === false) {
+            throw new Exception('Query preparation failed: ' . $this->connection->error);
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+
+        if ($stmt->errno) {
+            throw new Exception('Query execution failed: ' . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        return $result;
+    }
+
+    public function close() {
+        $this->connection->close();
+    }
+}
+
+// Instantiate the database connection and store it globally.
+global $db;
+$db = new DBConnection();
+
+
+
+
+Write posts.php that contains all below function fully working, production level, no need to include file, if will be include self:
+
+Retrieving Posts:
+- get_posts(array $args = null|(numberposts-default 10, -1 for all, category-Category ID or comma-separated list of IDs (this or any children) default 0,include-An array of post IDs to retrieve, default empty array, exclude-An array of post IDs not to retrieve, default empty array, suppress_filters-Whether to suppress filters. Default true.)) - Retrieves an array of posts based on specified parameters, return posts array.
+- get_post(post_id) - Retrieves a specific post by ID
+- get_post_field($field,post_id) - Retrieves a specific field from a post
+- get_post_id_from_slug(slug) - Retrive id from slug.
+
+Post Creation and Modification:
+- insert_post(array $postarr) - Creates a new post, post title and content are required, slug name will be created from title, and if slug already present then it will append -{number increment start from 1.} and reputation will be 0 always, user can't add in array.
+- update_post(array $postarr) - Updates an existing post, everything is optional.
+- delete_post(posr_id or slug) - Deletes a post
+- trash_post(posr_id or slug) - Moves a post to trash
+- untrash_post(posr_id or slug) - Restores a post from trash
+
+
+Post Meta Functions:
+- add_post_meta(int $post_id, string $meta_key, mixed $meta_value, bool $unique = false) - Adds new post metadata
+- get_post_meta(post_id, key, single) - Retrieves post metadata
+- update_post_meta(post_id, key, value, prev_value - If specified, only update existing metadata entries with this value. Otherwise, update all entries) - Updates post metadata
+- delete_post_meta(post_id, key, value - string or array,delete row with this values only. otherwise all) - Deletes post metadata
+
+
+Post Status and Type:
+- get_post_status(id or slug) - Retrieves the post status
+- is_post_type_archive(id or slug) - Checks if viewing a specific post type archive
+
+
+Post Taxonomy Functions:
+- get_the_terms() - Retrieves terms for a post
+- get_the_term_list() - Gets a list of terms for a post
+- set_post_terms() - Sets terms for a post
+- remove_object_terms() - Removes terms from a post
+
+
+Post Permalink and URL:
+- get_permalink($post_id, string $taxonomy) - Retrieves the post's permalink
+- get_post_permalink(post_id) - Gets a specific post's permalink (slug)
+
+Post Author Functions:
+- get_the_author_meta(author_id) - Retrieves author metadata.
+- get_the_author_posts_link(author_id) - Gets link to author's posts.
